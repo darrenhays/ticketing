@@ -3,6 +3,7 @@ import json
 import logging
 from botocore.exceptions import ClientError
 from flask import Flask, jsonify, Response 
+from objects import User
 
 
 app = Flask(__name__)
@@ -12,7 +13,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 @app.route('/')
-def hello():
+def index():
     database = boto3.resource('dynamodb')
     table = database.Table('Users')
     
@@ -20,4 +21,6 @@ def hello():
     data = response['Items']
     logger.info(data)
 
-    return Response(json.dumps(data), status=200)
+    return Response(json.dumps(data), status=200, mimetype='application/json')
+
+    
