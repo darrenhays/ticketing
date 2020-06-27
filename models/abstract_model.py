@@ -31,15 +31,18 @@ class AbstractModel:
             logger.error(e)
             return {}
 
-    def update(self, id, attributes_to_update, attribute_values):
+    def update(self, id, updated_attributes):
         logger.info("########## {} update ##########".format(self.__class__.__name__))
         logger.info("id: {}".format(id))
+        item = self.get(id)
+        for attribute, value in updated_attributes.items():
+            item[attribute] = value
         try:
-            self.table.update_item(Key={'id': id}, UpdateExpression=attributes_to_update, ExpressionAttributeValues=attribute_values)
-            return True
+            self.table.put_item(Item=item)
         except Exception as e:
             logger.error(e)
-            return False
+            return None
+        return item
 
     def delete(self, id):
         logger.info("########## {} delete ##########".format(self.__class__.__name__))

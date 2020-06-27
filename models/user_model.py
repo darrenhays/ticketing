@@ -12,22 +12,16 @@ class UserModel(AbstractModel):
             'email': email,
             'password': password
         }
-        id = self.insert(item)
-        return User(id, email, password)
+        user_id = self.insert(item)
+        return User(user_id, email, password)
     
-    def get_user(self, id):
-        user_record = self.get(id)
+    def get_user(self, user_id):
+        user_record = self.get(user_id)
         return User(user_record.get('id'), user_record.get('email'), user_record.get('password'))
     
-    def delete_user(self, user):
-        return self.delete(user.id)
+    def delete_user(self, user_id):
+        return self.delete(user_id)
 
-    def update_user(self, user):
-        attributes_to_update = "set email = :e, password = :p"
-        attribute_values = {
-            ':e': user.email,
-            ':p': user.password
-        }
-        if self.update(user.id, attributes_to_update, attribute_values):
-            return user
-        return User()
+    def update_user(self, user_id, updated_attributes):
+        user_record = self.update(user_id, updated_attributes)
+        return User(user_record.get('id'), user_record.get('email'), user_record.get('password'))

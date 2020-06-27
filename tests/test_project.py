@@ -55,10 +55,9 @@ class TestProject(unittest.TestCase):
         # update user
         user_email = "newtest@test.com"
         update_user_response = requests.request(
-            url='http://localhost:5000/users',
+            url='http://localhost:5000/users/{}'.format(user_id),
             method='PATCH',
             data=json.dumps({
-                "id": user_id,
                 "email": user_email,
                 "password": user_password
             })
