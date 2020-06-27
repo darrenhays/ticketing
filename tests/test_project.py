@@ -8,17 +8,21 @@ from unittest.mock import patch
 
 class TestProject(unittest.TestCase):
     @patch('models.user_model.AbstractModel.insert')
-    def test_user_model_creates_a_user_object(self, mock_insert):
-        mock_insert.return_value = 'some_id'
-
+    def test_user_model_creates_a_user_record(self, mock_insert):
+        user_id = 'some_id'
         user_email = 'test@test.com'
         user_password = 'testpassword'
-        user = UserModel().create_user(user_email, user_password)
+        mock_insert.return_value = {
+            'id': user_id,
+            'email': user_email,
+            'password': user_password
+        }
+        user_record = UserModel().create_user(user_email, user_password)
 
-        assert isinstance(user, User)
-        assert user.id
-        assert user.email == user_email
-        assert user.password == user_password
+        assert isinstance(user_record, dict)
+        assert user_record['id']
+        assert user_record['email'] == user_email
+        assert user_record['password'] == user_password
 
     def test_create_get_delete_user_end_to_end(self):
         user_email = 'test@test.com'
