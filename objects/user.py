@@ -1,9 +1,8 @@
 import json
 
 class User:
-    def __init__(self, attributes=None):
-        if attributes:
-            self.load(attributes)
+    def __init__(self, attributes={}):
+        self.load(attributes)
 
     @property
     def __dict__(self):
