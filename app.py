@@ -28,8 +28,8 @@ def after_request_handler(response):
     return response
 app.after_request(after_request_handler)
 
-@app.route('/authenticate', methods=['POST'])
-def authenticate():
+@app.route('/sessions', methods=['POST'])
+def create_session():
     request_data = json.loads(request.data)
     email = request_data['email']
     password = request_data['password']

@@ -1,7 +1,7 @@
 import json
 
 class User:
-    def __init__(self, attributes=None):
+    def __init__(self, attributes={}):
         self.load(attributes)
 
     @property
