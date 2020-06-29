@@ -19,8 +19,8 @@ class AbstractModel:
             self.table.put_item(Item=item)
         except Exception as e:
             logger.error(e)
-            return None           
-        return item['id']
+            return {}         
+        return item
 
     def get(self, id):
         logger.info("########## {} get ##########".format(self.__class__.__name__))
@@ -41,7 +41,7 @@ class AbstractModel:
             self.table.put_item(Item=item)
         except Exception as e:
             logger.error(e)
-            return None
+            return {}
         return item
 
     def delete(self, id):

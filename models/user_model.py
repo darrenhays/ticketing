@@ -1,5 +1,4 @@
 from models.abstract_model import AbstractModel
-from objects.user import User
 
 
 class UserModel(AbstractModel):
@@ -12,16 +11,13 @@ class UserModel(AbstractModel):
             'email': email,
             'password': password
         }
-        user_id = self.insert(item)
-        return User(user_id, email, password)
+        return self.insert(item)
     
     def get_user(self, user_id):
-        user_record = self.get(user_id)
-        return User(user_record.get('id'), user_record.get('email'), user_record.get('password'))
+        return self.get(user_id)
     
     def delete_user(self, user_id):
         return self.delete(user_id)
 
     def update_user(self, user_id, updated_attributes):
-        user_record = self.update(user_id, updated_attributes)
-        return User(user_record.get('id'), user_record.get('email'), user_record.get('password'))
+        return self.update(user_id, updated_attributes)
