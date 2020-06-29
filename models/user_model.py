@@ -6,9 +6,7 @@ logger = logging.getLogger()
 
 
 class UserModel(AbstractModel):
-    def __init__(self):
-        self.table_name = 'Users'
-        super().__init__()
+    table_name = 'Users'
     
     def create_user(self, email, password):
         item = {

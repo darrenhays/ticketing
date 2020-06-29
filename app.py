@@ -37,7 +37,7 @@ def authenticate():
     user_record = UserModel().get_user_by_email(email)
     if user_record['password'] == password:
         session_record = SessionModel().create_session()
-        return Response(json.dumps({'authentication_token': session_record['id']}), status=200)
+        return Response(json.dumps({'session_id': session_record['id']}), status=200)
     else:
         return Response(json.dumps({'message': 'invalid credentials'}), status=403)
 

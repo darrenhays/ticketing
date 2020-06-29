@@ -6,21 +6,15 @@ logger = logging.getLogger()
 
 
 class SessionModel(AbstractModel):
-    def __init__(self):
-        self.table_name = 'Sessions'
-        super().__init__()
+    table_name = 'Sessions'
 
     def create_session(self):
-        now = datetime.now()
-        item = {
-            'creation_time': str(now)
-        }
+        item = {'created': str(datetime.now())}
         return self.insert(item)
 
     def get_session(self, session_id):
         return self.get(session_id)
 
     def refresh_session(self, session_id):
-        now = datetime.now()
-        updated_attribute = {'creation_time': now}
+        updated_attribute = {'created': datetime.now()}
         return self.update(session_id, updated_attribute)
