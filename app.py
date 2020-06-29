@@ -1,6 +1,8 @@
 import json
 import logging
-from flask import Flask, Response, request 
+import uuid
+from flask import Flask, Response, request
+from models.session_model import SessionModel
 from models.user_model import UserModel
 from objects.user import User
 
@@ -27,11 +29,26 @@ def after_request_handler(response):
     return response
 app.after_request(after_request_handler)
 
+@app.route('/authenticate', methods=['POST'])
+def authenticate():
+    request_data = json.loads(request.data)
+    email = request_data['email']
+    password = request_data['password']
+    user_record = UserModel().get_user_by_email(email)
+    if user_record['password'] == password:
+        session_record = SessionModel().create_session()
+        return Response(json.dumps({'authentication_token': session_record['id']}), status=200)
+    else:
+        return Response(json.dumps({'message': 'invalid credentials'}), status=403)
+
 @app.route('/users', methods=['POST'])
 def create_user():
     request_data = json.loads(request.data)
     email = request_data['email']
     password = request_data['password']
+    user_record = UserModel().get_user_by_email(email)
+    if user_record:
+        return Response(json.dumps({'message': 'email already exists'}), status=400) #FIXME status
     user_record = UserModel().create_user(email=email, password=password)
     user = User(user_record)
     return Response(user.jsonify(), status=200)
