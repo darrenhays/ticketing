@@ -1,6 +1,5 @@
 import json
 import logging
-import uuid
 from flask import Flask, Response, request
 from models.session_model import SessionModel
 from models.user_model import UserModel
