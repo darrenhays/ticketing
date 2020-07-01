@@ -36,7 +36,7 @@ def create_session():
     password = request_data.get('password')
     user_record = UserModel().get_user_by_email(email)
     if user_record.get('password') == password:
-        session_record = SessionModel().create_session()
+        session_record = SessionModel().create_session(user_record.get('id'))
         return Response(json.dumps({'session_id': session_record.get('id')}), status=200)
     else:
         return Response(json.dumps({'message': 'invalid credentials'}), status=403)
@@ -56,10 +56,14 @@ def create_user():
 @app.route('/users/<user_id>', methods=['PATCH'])
 @is_authenticated
 def update_user(user_id):
-    updated_attributes = json.loads(request.data)
-    user_record = UserModel().update_user(user_id, updated_attributes)
-    user = User(user_record)
-    return Response(user.jsonify(), status=200)
+    session_user_id = SessionModel().get_session(request.headers.get('session_id')).get('user_id')
+    if user_id == session_user_id:
+        updated_attributes = json.loads(request.data)
+        user_record = UserModel().update_user(user_id, updated_attributes)
+        user = User(user_record)
+        return Response(user.jsonify(), status=200)
+    else:
+        return Response(json.dumps({'message': 'invalid credentials'}), status=403)
 
 @app.route('/users/<user_id>', methods=['GET'])
 @is_authenticated

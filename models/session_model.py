@@ -8,9 +8,12 @@ logger = logging.getLogger()
 class SessionModel(AbstractModel):
     table_name = 'Sessions'
 
-    def create_session(self):
+    def create_session(self, user_id):
         expiration = str(datetime.now() + timedelta(minutes=15))
-        item = {'expiration': expiration}
+        item = {
+            'user_id': user_id,
+            'expiration': expiration
+            }
         return self.insert(item)
 
     def get_session(self, session_id):
