@@ -28,7 +28,7 @@ class TestProject(unittest.TestCase):
         user_email = 'test@test.com'
         user_password = 'testpassword'
 
-        # delete user if exists
+        # delete user if not successfully deleted in last run
         user = UserModel().get_user_by_email(user_email)
         if user:
             UserModel().delete_user(user.get('id'))
@@ -43,7 +43,6 @@ class TestProject(unittest.TestCase):
             })
         )
         create_user_response_body = json.loads(create_user_response.text)
-        #import pdb; pdb.set_trace()
         user_id = create_user_response_body.pop('id')
         expected_create_user_response_body = {
             "email": user_email,

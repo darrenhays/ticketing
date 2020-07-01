@@ -13,8 +13,9 @@ def is_authenticated(f):
     def wrapped(*args, **kwargs):
         session_id = request.headers.get('session_id')
         session_record = SessionModel().get_session(session_id)
+        expiration = datetime.strptime(session_record.get('expiration'), '%Y-%m-%d %H:%M:%S.%f')
         try:
-            if datetime.now() <= datetime.strptime(str(session_record.get('expiration')), '%Y-%m-%d %H:%M:%S.%f'): 
+            if datetime.now() <= expiration: 
                 return f(*args, **kwargs)
         except:
             pass
