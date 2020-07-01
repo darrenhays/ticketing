@@ -4,7 +4,7 @@ from flask import Flask, Response, request
 from models.session_model import SessionModel
 from models.user_model import UserModel
 from objects.user import User
-from security.sessions import is_authenticated
+from security.sessions import is_valid_session, user_is_session_user
 
 app = Flask(__name__)
 logging.basicConfig()
@@ -32,29 +32,30 @@ app.after_request(after_request_handler)
 @app.route('/sessions', methods=['POST'])
 def create_session():
     request_data = json.loads(request.data)
-    email = request_data['email']
-    password = request_data['password']
+    email = request_data.get('email')
+    password = request_data.get('password')
     user_record = UserModel().get_user_by_email(email)
-    if user_record['password'] == password:
-        session_record = SessionModel().create_session()
-        return Response(json.dumps({'session_id': session_record['id']}), status=200)
+    if user_record.get('password') == password:
+        session_record = SessionModel().create_session(user_record.get('id'))
+        return Response(json.dumps({'session_id': session_record.get('id')}), status=200)
     else:
         return Response(json.dumps({'message': 'invalid credentials'}), status=403)
 
 @app.route('/users', methods=['POST'])
 def create_user():
     request_data = json.loads(request.data)
-    email = request_data['email']
-    password = request_data['password']
+    email = request_data.get('email')
+    password = request_data.get('password')
     user_record = UserModel().get_user_by_email(email)
     if user_record:
-        return Response(json.dumps({'message': 'email already exists'}), status=400) #FIXME status
+        return Response(json.dumps({'message': 'email already exists'}), status=409)
     user_record = UserModel().create_user(email=email, password=password)
     user = User(user_record)
     return Response(user.jsonify(), status=200)
 
 @app.route('/users/<user_id>', methods=['PATCH'])
-@is_authenticated
+@is_valid_session
+@user_is_session_user
 def update_user(user_id):
     updated_attributes = json.loads(request.data)
     user_record = UserModel().update_user(user_id, updated_attributes)
@@ -62,14 +63,16 @@ def update_user(user_id):
     return Response(user.jsonify(), status=200)
 
 @app.route('/users/<user_id>', methods=['GET'])
-@is_authenticated
+@is_valid_session
+@user_is_session_user
 def get_user(user_id):
     user_record = UserModel().get_user(user_id)
     user = User(user_record)
     return Response(user.jsonify(), status=200)
 
 @app.route('/users/<user_id>', methods=['DELETE'])
-@is_authenticated
+@is_valid_session
+@user_is_session_user
 def delete_user(user_id):
     if UserModel().delete_user(user_id):
         response = {'message': 'success'}
