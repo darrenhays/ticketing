@@ -32,23 +32,23 @@ app.after_request(after_request_handler)
 @app.route('/sessions', methods=['POST'])
 def create_session():
     request_data = json.loads(request.data)
-    email = request_data['email']
-    password = request_data['password']
+    email = request_data.get('email')
+    password = request_data.get('password')
     user_record = UserModel().get_user_by_email(email)
-    if user_record['password'] == password:
+    if user_record.get('password') == password:
         session_record = SessionModel().create_session()
-        return Response(json.dumps({'session_id': session_record['id']}), status=200)
+        return Response(json.dumps({'session_id': session_record.get('id')}), status=200)
     else:
         return Response(json.dumps({'message': 'invalid credentials'}), status=403)
 
 @app.route('/users', methods=['POST'])
 def create_user():
     request_data = json.loads(request.data)
-    email = request_data['email']
-    password = request_data['password']
+    email = request_data.get('email')
+    password = request_data.get('password')
     user_record = UserModel().get_user_by_email(email)
     if user_record:
-        return Response(json.dumps({'message': 'email already exists'}), status=400) #FIXME status
+        return Response(json.dumps({'message': 'email already exists'}), status=409)
     user_record = UserModel().create_user(email=email, password=password)
     user = User(user_record)
     return Response(user.jsonify(), status=200)
