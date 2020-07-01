@@ -43,9 +43,13 @@ def create_session():
 
 @app.route('/users', methods=['POST'])
 def create_user():
+    # email, password - MANDITORY
+    # first name, last name - OPTIONAL
     request_data = json.loads(request.data)
     email = request_data.get('email')
     password = request_data.get('password')
+    # if not email or not password:
+    #      return error message
     user_record = UserModel().get_user_by_email(email)
     if user_record:
         return Response(json.dumps({'message': 'email already exists'}), status=409)
@@ -57,6 +61,7 @@ def create_user():
 @is_valid_session
 @user_is_session_user
 def update_user(user_id):
+    # updated email must not exist
     updated_attributes = json.loads(request.data)
     user_record = UserModel().update_user(user_id, updated_attributes)
     user = User(user_record)
