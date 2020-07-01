@@ -4,7 +4,7 @@ from flask import Flask, Response, request
 from models.session_model import SessionModel
 from models.user_model import UserModel
 from objects.user import User
-from security.sessions import is_authenticated
+from security.sessions import is_valid_session, user_is_session_user
 
 app = Flask(__name__)
 logging.basicConfig()
@@ -54,26 +54,25 @@ def create_user():
     return Response(user.jsonify(), status=200)
 
 @app.route('/users/<user_id>', methods=['PATCH'])
-@is_authenticated
+@is_valid_session
+@user_is_session_user
 def update_user(user_id):
-    session_user_id = SessionModel().get_session(request.headers.get('session_id')).get('user_id')
-    if user_id == session_user_id:
-        updated_attributes = json.loads(request.data)
-        user_record = UserModel().update_user(user_id, updated_attributes)
-        user = User(user_record)
-        return Response(user.jsonify(), status=200)
-    else:
-        return Response(json.dumps({'message': 'invalid credentials'}), status=403)
+    updated_attributes = json.loads(request.data)
+    user_record = UserModel().update_user(user_id, updated_attributes)
+    user = User(user_record)
+    return Response(user.jsonify(), status=200)
 
 @app.route('/users/<user_id>', methods=['GET'])
-@is_authenticated
+@is_valid_session
+@user_is_session_user
 def get_user(user_id):
     user_record = UserModel().get_user(user_id)
     user = User(user_record)
     return Response(user.jsonify(), status=200)
 
 @app.route('/users/<user_id>', methods=['DELETE'])
-@is_authenticated
+@is_valid_session
+@user_is_session_user
 def delete_user(user_id):
     if UserModel().delete_user(user_id):
         response = {'message': 'success'}

@@ -25,7 +25,7 @@ class TestProject(unittest.TestCase):
         assert user_record['password'] == user_password
 
     def test_create_authenticate_get_update_delete_user_end_to_end(self):
-        user_email = 'test@test.com'
+        user_email = 'end_to_end_test_user@test.com'
         user_password = 'testpassword'
 
         # delete user if not successfully deleted in last run
