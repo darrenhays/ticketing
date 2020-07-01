@@ -24,10 +24,15 @@ class TestProject(unittest.TestCase):
         assert user_record['email'] == user_email
         assert user_record['password'] == user_password
 
-    def test_create_get_delete_user_end_to_end(self):
-        user_email = 'test@test.com'
+    def test_create_authenticate_get_update_delete_user_end_to_end(self):
+        user_email = 'end_to_end_test_user@test.com'
         user_password = 'testpassword'
-        
+
+        # delete user if not successfully deleted in last run
+        user = UserModel().get_user_by_email(user_email)
+        if user:
+            UserModel().delete_user(user.get('id'))
+
         # create user
         create_user_response = requests.request(
             url='http://localhost:5000/users',
@@ -43,11 +48,26 @@ class TestProject(unittest.TestCase):
             "email": user_email,
             "password": user_password
         }
+
+        # create session
+        create_session_response = requests.request(
+            url='http://localhost:5000/sessions',
+            method='POST',
+            data=json.dumps({
+                "email": user_email,
+                "password": user_password
+            })
+        )
+        create_session_response_body = json.loads(create_session_response.text)
+        session_id = create_session_response_body.get('session_id')
         
         # get user
         get_user_response = requests.request(
             url='http://localhost:5000/users/{}'.format(user_id),
-            method='GET'
+            method='GET',
+            headers={
+                "session_id": session_id
+            }
         )
         get_user_response_body = json.loads(get_user_response.text)
         expected_get_user_response_body = {
@@ -64,7 +84,10 @@ class TestProject(unittest.TestCase):
             data=json.dumps({
                 "email": user_email,
                 "password": user_password
-            })
+            }),
+            headers={
+                "session_id": session_id
+            }
         )
         update_user_response_body = json.loads(update_user_response.text)
         expected_update_user_response_body = {
@@ -76,7 +99,10 @@ class TestProject(unittest.TestCase):
         # delete user
         delete_user_response = requests.request(
             url='http://localhost:5000/users/{}'.format(user_id),
-            method='DELETE'
+            method='DELETE',
+            headers={
+                "session_id": session_id
+            }
         )
         delete_user_response_body = json.loads(delete_user_response.text)
         expected_delete_user_response_body = {'message': 'success'}
@@ -85,6 +111,9 @@ class TestProject(unittest.TestCase):
         assert create_user_response.status_code == 200
         assert create_user_response_body == expected_create_user_response_body
         assert json.loads(create_user_response.text)['id']
+
+        # testing create session
+        assert session_id
 
         # testing get user
         assert get_user_response.status_code == 200
