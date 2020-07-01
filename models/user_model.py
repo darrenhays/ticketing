@@ -8,10 +8,13 @@ logger = logging.getLogger()
 class UserModel(AbstractModel):
     table_name = 'Users'
     
-    def create_user(self, email, password):
+    # Should this take a dictionary instead???
+    def create_user(self, email, password, first_name=None, last_name=None):
         item = {
             'email': email,
-            'password': password
+            'password': password,
+            'first_name': first_name,
+            'last_name': last_name
         }
         return self.insert(item)
     
