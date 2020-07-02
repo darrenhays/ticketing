@@ -43,16 +43,11 @@ def create_session():
 
 @app.route('/users', methods=['POST'])
 def create_user():
-    request_data = json.loads(request.data)
-    email = request_data.get('email')
-    password = request_data.get('password')
-    first_name = request_data.get('first_name')
-    last_name = request_data.get('last_name')
-    if not email or not password:
-        return Response(json.dumps({'message': 'email and password required'}), status=409) #FIXME status code
-    if UserModel().get_user_by_email(email):
-        return Response(json.dumps({'message': 'email already exists'}), status=409)
-    user_record = UserModel().create_user(request_data)
+    attributes = json.loads(request.data)
+    try:
+        user_record = UserModel().create_user(attributes)
+    except Exception as e:
+        return Response(json.dumps({'message': str(e)}), status=400) #FIXME status code
     user = User(user_record)
     return Response(user.jsonify(), status=200)
 
@@ -61,10 +56,10 @@ def create_user():
 @user_is_session_user
 def update_user(user_id):
     updated_attributes = json.loads(request.data)
-    user_record_by_updated_email = UserModel().get_user_by_email(updated_attributes.get('email'))
-    if user_record_by_updated_email and user_id != user_record_by_updated_email.get('id'):
-        return Response(json.dumps({'message': 'email already exists'}), status=409)
-    user_record = UserModel().update_user(user_id, updated_attributes)
+    try:
+        user_record = UserModel().update_user(user_id, updated_attributes)
+    except Exception as e:
+        return Response(json.dumps({'message': str(e)}), status=400) #FIXME status code
     user = User(user_record)
     return Response(user.jsonify(), status=200)
 

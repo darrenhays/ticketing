@@ -8,12 +8,15 @@ from unittest.mock import patch
 
 class TestProject(unittest.TestCase):
     @patch('models.user_model.AbstractModel.insert')
-    def test_user_model_creates_a_user_record(self, mock_insert):
+    @patch('models.user_model.UserModel.get_user_by_email')
+    def test_user_model_creates_a_user_record(self, mock_get_user_by_email, mock_insert):
         user_id = 'some_id'
         user_email = 'test@test.com'
         user_password = 'testpassword'
         user_first_name = "First"
         user_last_name = "Last"
+        
+        mock_get_user_by_email.return_value = {}
         mock_insert.return_value = {
             'id': user_id,
             'email': user_email,
@@ -21,7 +24,15 @@ class TestProject(unittest.TestCase):
             'first_name': user_first_name,
             'last_name': user_last_name
         }
-        user_record = UserModel().create_user(mock_insert.return_value)
+
+        attributes = {
+            'email': user_email,
+            'password': user_password,
+            'first_name': user_first_name,
+            'last_name': user_last_name
+        }
+
+        user_record = UserModel().create_user(attributes)
 
         assert isinstance(user_record, dict)
         assert user_record['id']
