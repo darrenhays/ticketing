@@ -52,7 +52,7 @@ def create_user():
         return Response(json.dumps({'message': 'email and password required'}), status=409) #FIXME status code
     if UserModel().get_user_by_email(email):
         return Response(json.dumps({'message': 'email already exists'}), status=409)
-    user_record = UserModel().create_user(email=email, password=password, first_name=first_name, last_name=last_name)
+    user_record = UserModel().create_user(request_data)
     user = User(user_record)
     return Response(user.jsonify(), status=200)
 

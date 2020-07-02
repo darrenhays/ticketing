@@ -12,12 +12,16 @@ class TestProject(unittest.TestCase):
         user_id = 'some_id'
         user_email = 'test@test.com'
         user_password = 'testpassword'
+        user_first_name = "First"
+        user_last_name = "Last"
         mock_insert.return_value = {
             'id': user_id,
             'email': user_email,
-            'password': user_password
+            'password': user_password,
+            'first_name': user_first_name,
+            'last_name': user_last_name
         }
-        user_record = UserModel().create_user(user_email, user_password)
+        user_record = UserModel().create_user(mock_insert.return_value)
 
         assert isinstance(user_record, dict)
         assert user_record['id']

@@ -11,14 +11,8 @@ class UserModel(AbstractModel):
     # receives a dictionary
     # required & optional field list at class level
     # handle mandatory email and password here
-    def create_user(self, email, password, first_name=None, last_name=None):
-        item = {
-            'email': email,
-            'password': password,
-            'first_name': first_name,
-            'last_name': last_name
-        }
-        return self.insert(item)
+    def create_user(self, attributes={}):
+        return self.insert(attributes)
     
     def get_user(self, user_id):
         return self.get(user_id)
