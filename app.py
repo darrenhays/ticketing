@@ -49,7 +49,9 @@ def create_user():
     first_name = request_data.get('first_name')
     last_name = request_data.get('last_name')
     if not email or not password:
-        return Response(json.dumps({'message': 'email and password required'}), status=409) #FIXME status code 
+        return Response(json.dumps({'message': 'email and password required'}), status=409) #FIXME status code
+    if UserModel().get_user_by_email(email):
+        return Response(json.dumps({'message': 'email already exists'}), status=409)
     user_record = UserModel().create_user(email=email, password=password, first_name=first_name, last_name=last_name)
     user = User(user_record)
     return Response(user.jsonify(), status=200)
@@ -59,9 +61,8 @@ def create_user():
 @user_is_session_user
 def update_user(user_id):
     updated_attributes = json.loads(request.data)
-    user_by_updated_email = UserModel().get_user_by_email(updated_attributes.get('email'))
-    current_user = UserModel().get_user(user_id)
-    if user_by_updated_email and current_user != user_by_updated_email:
+    user_record_by_updated_email = UserModel().get_user_by_email(updated_attributes.get('email'))
+    if user_record_by_updated_email and user_id != user_record_by_updated_email.get('id'):
         return Response(json.dumps({'message': 'email already exists'}), status=409)
     user_record = UserModel().update_user(user_id, updated_attributes)
     user = User(user_record)

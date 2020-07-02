@@ -8,7 +8,9 @@ logger = logging.getLogger()
 class UserModel(AbstractModel):
     table_name = 'Users'
     
-    # Should this take a dictionary instead???
+    # receives a dictionary
+    # required & optional field list at class level
+    # handle mandatory email and password here
     def create_user(self, email, password, first_name=None, last_name=None):
         item = {
             'email': email,

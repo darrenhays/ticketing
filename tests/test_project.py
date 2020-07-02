@@ -27,6 +27,8 @@ class TestProject(unittest.TestCase):
     def test_create_authenticate_get_update_delete_user_end_to_end(self):
         user_email = 'end_to_end_test_user@test.com'
         user_password = 'testpassword'
+        user_first_name = 'first'
+        user_last_name = 'last'
 
         # delete user if not successfully deleted in last run
         user = UserModel().get_user_by_email(user_email)
@@ -39,14 +41,18 @@ class TestProject(unittest.TestCase):
             method='POST',
             data=json.dumps({
                 "email": user_email,
-                "password": user_password
+                "password": user_password,
+                "first_name": user_first_name,
+                "last_name": user_last_name
             })
         )
         create_user_response_body = json.loads(create_user_response.text)
         user_id = create_user_response_body.pop('id')
         expected_create_user_response_body = {
             "email": user_email,
-            "password": user_password
+            "password": user_password,
+            "first_name": user_first_name,
+            "last_name": user_last_name
         }
 
         # create session
@@ -55,7 +61,8 @@ class TestProject(unittest.TestCase):
             method='POST',
             data=json.dumps({
                 "email": user_email,
-                "password": user_password
+                "password": user_password,
+                "user_id": user_id
             })
         )
         create_session_response_body = json.loads(create_session_response.text)
@@ -73,7 +80,9 @@ class TestProject(unittest.TestCase):
         expected_get_user_response_body = {
             "id": user_id,
             "email": user_email,
-            "password": user_password
+            "password": user_password,
+            "first_name": user_first_name,
+            "last_name": user_last_name
         }
 
         # update user
@@ -93,7 +102,9 @@ class TestProject(unittest.TestCase):
         expected_update_user_response_body = {
             "id": user_id,
             "email": user_email,
-            "password": user_password
+            "password": user_password,
+            "first_name": user_first_name,
+            "last_name": user_last_name
         }
 
         # delete user
