@@ -8,16 +8,31 @@ from unittest.mock import patch
 
 class TestProject(unittest.TestCase):
     @patch('models.user_model.AbstractModel.insert')
-    def test_user_model_creates_a_user_record(self, mock_insert):
+    @patch('models.user_model.UserModel.get_user_by_email')
+    def test_user_model_creates_a_user_record(self, mock_get_user_by_email, mock_insert):
         user_id = 'some_id'
         user_email = 'test@test.com'
         user_password = 'testpassword'
+        user_first_name = "First"
+        user_last_name = "Last"
+        
+        mock_get_user_by_email.return_value = {}
         mock_insert.return_value = {
             'id': user_id,
             'email': user_email,
-            'password': user_password
+            'password': user_password,
+            'first_name': user_first_name,
+            'last_name': user_last_name
         }
-        user_record = UserModel().create_user(user_email, user_password)
+
+        attributes = {
+            'email': user_email,
+            'password': user_password,
+            'first_name': user_first_name,
+            'last_name': user_last_name
+        }
+
+        user_record = UserModel().create_user(attributes)
 
         assert isinstance(user_record, dict)
         assert user_record['id']
@@ -27,6 +42,8 @@ class TestProject(unittest.TestCase):
     def test_create_authenticate_get_update_delete_user_end_to_end(self):
         user_email = 'end_to_end_test_user@test.com'
         user_password = 'testpassword'
+        user_first_name = 'first'
+        user_last_name = 'last'
 
         # delete user if not successfully deleted in last run
         user = UserModel().get_user_by_email(user_email)
@@ -39,14 +56,18 @@ class TestProject(unittest.TestCase):
             method='POST',
             data=json.dumps({
                 "email": user_email,
-                "password": user_password
+                "password": user_password,
+                "first_name": user_first_name,
+                "last_name": user_last_name
             })
         )
         create_user_response_body = json.loads(create_user_response.text)
         user_id = create_user_response_body.pop('id')
         expected_create_user_response_body = {
             "email": user_email,
-            "password": user_password
+            "password": user_password,
+            "first_name": user_first_name,
+            "last_name": user_last_name
         }
 
         # create session
@@ -55,7 +76,8 @@ class TestProject(unittest.TestCase):
             method='POST',
             data=json.dumps({
                 "email": user_email,
-                "password": user_password
+                "password": user_password,
+                "user_id": user_id
             })
         )
         create_session_response_body = json.loads(create_session_response.text)
@@ -73,7 +95,9 @@ class TestProject(unittest.TestCase):
         expected_get_user_response_body = {
             "id": user_id,
             "email": user_email,
-            "password": user_password
+            "password": user_password,
+            "first_name": user_first_name,
+            "last_name": user_last_name
         }
 
         # update user
@@ -93,7 +117,9 @@ class TestProject(unittest.TestCase):
         expected_update_user_response_body = {
             "id": user_id,
             "email": user_email,
-            "password": user_password
+            "password": user_password,
+            "first_name": user_first_name,
+            "last_name": user_last_name
         }
 
         # delete user
