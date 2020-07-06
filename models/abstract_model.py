@@ -7,6 +7,7 @@ logger = logging.getLogger()
 
 class AbstractModel:
     table_name = None
+    
     def __init__(self):
         database = boto3.resource('dynamodb')
         self.table = database.Table(self.table_name)
