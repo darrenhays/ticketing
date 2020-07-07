@@ -9,11 +9,14 @@ logger = logging.getLogger()
 class EmailExistsError(Exception):
     pass
 
+
 class InvalidAttributeError(Exception):
     pass
 
+
 class RequiredAttributeError(Exception):
     pass
+
 
 class UserModel(AbstractModel):
     table_name = 'Users'
