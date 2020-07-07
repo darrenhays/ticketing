@@ -3,8 +3,8 @@ import logging
 from flask import Flask, Response, request
 from models.session_model import SessionModel
 from models.user_model import UserModel
+from objects.password import Password
 from objects.user import User
-from security.encryptor import Encryptor
 from security.sessions import is_valid_session, user_is_session_user
 
 app = Flask(__name__)
@@ -36,7 +36,7 @@ def create_session():
     email = request_data.get('email')
     password = request_data.get('password')
     user_record = UserModel().get_user_by_email(email)
-    if user_record.get('password') == Encryptor(password).hash:
+    if user_record.get('password') == Password(password):
         session_record = SessionModel().create_session(user_record.get('id'))
         return Response(json.dumps({'session_id': session_record.get('id')}), status=200)
     else:
@@ -80,11 +80,4 @@ def delete_user(user_id):
         response = {'message': 'success'}
     else:
         response = {'message': 'failure'}
-    return Response(json.dumps(response), status=200)
-
-@app.route('/test', methods=['POST'])
-def test():
-    request_data = json.loads(request.data)
-    user_input = request_data['test']
-    response = {"hash": Encryptor(user_input).hash}
     return Response(json.dumps(response), status=200)
