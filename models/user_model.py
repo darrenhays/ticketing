@@ -1,6 +1,7 @@
 import logging
 from boto3.dynamodb.conditions import Key
 from models.abstract_model import AbstractModel
+from objects.password import Password
 
 logger = logging.getLogger()
 
@@ -32,6 +33,7 @@ class UserModel(AbstractModel):
             raise EmailExistsError('email already exists')
         if not self.attributes_are_valid(attributes):
             raise InvalidAttributeError('only the following attributes are allowed: ' + ', '.join(self.required_attributes + self.optional_attributes))
+        attributes['password'] = str(Password(attributes.get('password')))
         return self.insert(attributes)
 
     def get_user(self, user_id):
@@ -57,6 +59,8 @@ class UserModel(AbstractModel):
             raise EmailExistsError('email already exists')
         if not self.attributes_are_valid(updated_attributes):
             raise InvalidAttributeError('only the following attributes are allowed: ' + ', '.join(self.required_attributes + self.optional_attributes))
+        if updated_attributes.get('password'):
+            updated_attributes['password'] = str(Password(updated_attributes.get('password')))
         return self.update(user_id, updated_attributes)
 
     def contains_required_attributes(self, attributes):

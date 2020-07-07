@@ -65,7 +65,6 @@ class TestProject(unittest.TestCase):
         user_id = create_user_response_body.pop('id')
         expected_create_user_response_body = {
             "email": user_email,
-            "password": user_password,
             "first_name": user_first_name,
             "last_name": user_last_name
         }
@@ -95,7 +94,6 @@ class TestProject(unittest.TestCase):
         expected_get_user_response_body = {
             "id": user_id,
             "email": user_email,
-            "password": user_password,
             "first_name": user_first_name,
             "last_name": user_last_name
         }
@@ -117,7 +115,6 @@ class TestProject(unittest.TestCase):
         expected_update_user_response_body = {
             "id": user_id,
             "email": user_email,
-            "password": user_password,
             "first_name": user_first_name,
             "last_name": user_last_name
         }
