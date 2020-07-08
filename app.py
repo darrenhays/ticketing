@@ -13,6 +13,8 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
+#FIXME write a readme file for running the system locally
+
 def before_request_handler():
     logger.debug('########## Request Received ########################################')
     logger.debug({'method': request.method})
