@@ -15,7 +15,10 @@ export FLASK_DEBUG=1
 ```
 mkvirtualenv -p python3 ticketing
 ```
-
+- Activate virtual environment
+```
+workon ticketing
+```
 - Install environment requirements from file
 ```
 pip install -r requirements.txt
