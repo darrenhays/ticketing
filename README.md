@@ -31,7 +31,11 @@ docker run --name redis -d -p 6379:6379 redis
 docker start redis
 ```
 # Testing
-To test that the system is working correctly run the following command from the project root
+- Run flask
+```
+flask run
+```
+- In a separate terminal
 ```
 python -m pytest
 ```
