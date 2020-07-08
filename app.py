@@ -3,16 +3,14 @@ from api.sessions import sessions_blueprint
 from api.users import users_blueprint
 from flask import Flask, Response, request
 
-app = Flask(__name__)
-app.register_blueprint(sessions_blueprint)
-app.register_blueprint(users_blueprint)
-
 logging.basicConfig()
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+app = Flask(__name__)
+app.register_blueprint(sessions_blueprint)
+app.register_blueprint(users_blueprint)
 
-#FIXME write a readme file for running the system locally
 
 def before_request_handler():
     logger.debug('########## Request Received ########################################')

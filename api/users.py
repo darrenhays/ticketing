@@ -1,5 +1,5 @@
 import json
-from flask import Blueprint, Flask, Response, request
+from flask import Blueprint, Response, request
 from models.user_model import UserModel
 from objects.user import User
 from security.sessions import is_valid_session, user_is_session_user

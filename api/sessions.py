@@ -1,9 +1,8 @@
 import json
-from flask import Blueprint, Flask, Response, request
+from flask import Blueprint, Response, request
 from models.session_model import SessionModel
 from models.user_model import UserModel
 from objects.password import Password
-
 
 sessions_blueprint = Blueprint('sessions', __name__)
 
