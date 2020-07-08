@@ -2,4 +2,5 @@ awscli
 boto3
 flask
 pytest
+redis
 requests

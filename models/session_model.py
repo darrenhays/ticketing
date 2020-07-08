@@ -1,25 +1,23 @@
+import json
 import logging
-from datetime import datetime, timedelta
-from models.abstract_model import AbstractModel
+import uuid
+from cache.cache import Cache
 
 logger = logging.getLogger()
 
 
-class SessionModel(AbstractModel):
-    table_name = 'Sessions'
+class SessionModel:
+    def __init__(self):
+        self.cache = Cache()
 
     def create_session(self, user_id):
-        expiration = str(datetime.now() + timedelta(minutes=15))
+        id = str(uuid.uuid4())
         item = {
-            'user_id': user_id,
-            'expiration': expiration
-            }
-        return self.insert(item)
+            'id': id,
+            'user_id': user_id
+        }
+        self.cache.set(id, json.dumps(item))
+        return item
 
     def get_session(self, session_id):
-        return self.get(session_id)
-
-    def refresh_session(self, session_id):
-        expiration = str(datetime.now() + timedelta(minutes=15))
-        updated_attributes = {'expiration': expiration}
-        return self.update(session_id, updated_attributes)
+        return json.loads(self.cache.get(session_id))
