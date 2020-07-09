@@ -11,7 +11,11 @@ def is_valid_session(f):
     @wraps(f)
     def wrapped(*args, **kwargs):
         session_id = request.headers.get('session_id')
-        session_record = SessionModel().get_session(session_id)
+        try:
+            session_record = SessionModel().get_session(session_id)
+        except Exception as e:
+            logger.error(e)
+            return Response(json.dumps({'message': 'unable to authenticate'}), status=403)
         if session_record:
             return f(*args, **kwargs)
         else:

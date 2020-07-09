@@ -3,6 +3,7 @@ from flask import Blueprint, Response, request
 from models.session_model import SessionModel
 from models.user_model import UserModel
 from objects.password import Password
+from security.sessions import is_valid_session
 
 sessions_blueprint = Blueprint('sessions', __name__)
 
@@ -18,3 +19,10 @@ def create_session():
         return Response(json.dumps({'session_id': session_record.get('id')}), status=200)
     else:
         return Response(json.dumps({'message': 'invalid credentials'}), status=403)
+
+
+@sessions_blueprint.route('/sessions/<session_id>', methods=['DELETE'])
+@is_valid_session
+def delete_session(session_id):
+    SessionModel().delete_session(session_id)
+    return Response(json.dumps({'message': 'success'}), status=200)
