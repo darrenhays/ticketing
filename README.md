@@ -29,6 +29,7 @@ docker start redis
 # Run flask
 flask run
 ```
+- Flask can be accessed @ localhost:5000
 
 # Testing
 ### Flask Setup
