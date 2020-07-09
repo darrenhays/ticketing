@@ -9,7 +9,6 @@ export PYTHONUNBUFFERED=1
 export FLASK_DEBUG=1
 ```
 - Source bash profile
-
 ### Virtual Environment
 - Create a virtual environment for the project
 ```
@@ -23,7 +22,6 @@ workon ticketing
 ```
 pip install -r requirements.txt
 ```
-
 ### Redis
 - Create a docker container for redis
 ```
