@@ -1,8 +1,13 @@
 # Assumptions
-- You are using a Linux terminal with bash installed
+- You are using a Linux based Bash
+- You are using Python 3.6 for ```python3```
+  - Verify with ```python3 --version```  
 # Setup
 ### Virtual Environment
 ```
+# Install virtual environment
+pip install virtualenv
+
 # Install virtual environment wrapper
 pip install virtualenvwrapper
 
@@ -26,18 +31,17 @@ docker start redis
 ```
 ### Flask
 ```
-# Run flask
-flask run
-```
-- Flask can be accessed @ localhost:5000
-
-# Testing
-### Flask Setup
-```
 # Set the following options in your terminal
 export PYTHONUNBUFFERED=1
 export FLASK_DEBUG=1
 
+# Run flask
+flask run
+```
+- Flask can be accessed @ http://localhost:5000
+
+# Testing
+```
 # Run flask
 flask run
 
