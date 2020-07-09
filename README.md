@@ -1,42 +1,45 @@
 # Assumptions
-- That you know your ass from a hole in the ground
-- You are using a Linux terminal with bash
+- You are using a Linux terminal with bash installed
 # Setup
-### Bash Profile
-- Add the following to bash profile
-```
-export PYTHONUNBUFFERED=1
-export FLASK_DEBUG=1
-```
-- Source bash profile
 ### Virtual Environment
-- Create a virtual environment for the project
 ```
+# Install virtual environment wrapper
+pip install virtualenvwrapper
+
+# Create a virtual environment for the project
 mkvirtualenv -p python3 ticketing
-```
-- Activate virtual environment
-```
+
+# Activate virtual environment
 workon ticketing
-```
-- Install environment requirements from file
-```
+
+# Install environment requirements from file
 pip install -r requirements.txt
 ```
 ### Redis
-- Create a docker container for redis
 ```
+# Create a docker container for redis
 docker run --name redis -d -p 6379:6379 redis
 ```
-- NOTE: Once the container is created you may start the container using the following
+###### NOTE: Once the container is created you may start the container using the following
 ```
 docker start redis
 ```
-# Testing
-- Run flask
+### Flask
 ```
+# Run flask
 flask run
 ```
-- In a separate terminal
+
+# Testing
+### Flask Setup
 ```
+# Set the following options in your terminal
+export PYTHONUNBUFFERED=1
+export FLASK_DEBUG=1
+
+# Run flask
+flask run
+
+# In a separate terminal run the tests
 python -m pytest
 ```
