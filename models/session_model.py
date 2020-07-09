@@ -19,5 +19,11 @@ class SessionModel:
         self.cache.set(id, json.dumps(item))
         return item
 
+    def delete_session(self, session_id):
+        self.cache.delete(session_id)
+
     def get_session(self, session_id):
-        return json.loads(self.cache.get(session_id))
+        session_record = self.cache.get(session_id)
+        if session_record:
+            return json.loads(session_record)
+        return None

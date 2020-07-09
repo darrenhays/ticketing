@@ -39,7 +39,7 @@ class TestProject(unittest.TestCase):
         assert user_record['email'] == user_email
         assert user_record['password'] == user_password
 
-    def test_create_authenticate_get_update_delete_user_end_to_end(self):
+    def test_create_authenticate_get_update_delete_user_delete_session_end_to_end(self):
         user_email = 'end_to_end_test_user@test.com'
         user_password = 'testpassword'
         user_first_name = 'first'
@@ -130,6 +130,17 @@ class TestProject(unittest.TestCase):
         delete_user_response_body = json.loads(delete_user_response.text)
         expected_delete_user_response_body = {'message': 'success'}
 
+        # delete session
+        delete_session_response = requests.request(
+            url='http://localhost:5000/sessions/{}'.format(session_id),
+            method='DELETE',
+            headers={
+                "session_id": session_id
+            }
+        )
+        delete_session_response_body = json.loads(delete_session_response.text)
+        expected_delete_session_response_body = {'message': 'success'}
+
         # testing create user
         assert create_user_response.status_code == 200
         assert create_user_response_body == expected_create_user_response_body
@@ -149,3 +160,7 @@ class TestProject(unittest.TestCase):
         # testing delete user
         assert delete_user_response.status_code == 200
         assert delete_user_response_body == expected_delete_user_response_body
+
+        # testing delete session
+        assert delete_user_response.status_code == 200
+        assert delete_session_response_body == expected_delete_session_response_body
