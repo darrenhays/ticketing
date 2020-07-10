@@ -1,0 +1,25 @@
+{
+    "staging": {
+        "app_function": "app.app",
+        "aws_region": "us-east-2",
+        "manage_roles": "false",
+        "profile_name": "default",
+        "project_name": "ticketing",
+        "role_arn": "arn:aws:iam::531085525366:role/ticketing_lambda",
+        "runtime": "python3.6",
+        "s3_bucket": "zappa-ticketing"
+    },
+    "production": {
+        "app_function": "app.app",
+        "aws_region": "us-east-2",
+        "manage_roles": "false",
+        "profile_name": "default",
+        "project_name": "ticketing",
+        "role_arn": "arn:aws:iam::531085525366:role/ticketing_lambda",
+        "runtime": "python3.6",
+        "s3_bucket": "zappa-ticketing",
+        "environment_variables": {
+            "environment": "production"
+        }
+    }
+}

@@ -2,6 +2,7 @@ import logging
 from boto3.dynamodb.conditions import Key
 from models.abstract_model import AbstractModel
 from objects.password import Password
+from settings import USERS_TABLE_NAME
 
 logger = logging.getLogger()
 
@@ -19,7 +20,7 @@ class RequiredAttributeError(Exception):
 
 
 class UserModel(AbstractModel):
-    table_name = 'Users'
+    table_name = USERS_TABLE_NAME
     required_attributes = [
         'email',
         'password'
