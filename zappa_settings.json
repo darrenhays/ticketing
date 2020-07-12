@@ -7,7 +7,10 @@
         "project_name": "ticketing",
         "role_arn": "arn:aws:iam::531085525366:role/ticketing_lambda",
         "runtime": "python3.6",
-        "s3_bucket": "zappa-ticketing"
+        "s3_bucket": "zappa-ticketing",
+        "environment_variables": {
+            "environment": "staging"
+        }
     },
     "production": {
         "app_function": "app.app",

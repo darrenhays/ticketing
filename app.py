@@ -39,22 +39,3 @@ app.after_request(after_request_handler)
 @app.route('/', methods=['GET'])
 def index():
     return Response(json.dumps({'message': 'success'}), status=200)
-
-
-@app.route('/tinker', methods=['GET'])
-def tinker():
-    import boto3
-    import json
-    from botocore.exceptions import ClientError
-    session = boto3.session.Session()
-    client = session.client(
-        service_name='secretsmanager',
-        region_name="us-east-2"
-    )
-
-    get_secret_value_response = client.get_secret_value(
-        SecretId='SALT'
-    )
-    if get_secret_value_response:
-        return Response(json.dumps({'message': 'success'}), status=200)
-    return Response(json.dumps({'message': 'fail'}), status=200)
