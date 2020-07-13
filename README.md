@@ -29,15 +29,6 @@ aws configure
 # Provide access key ID, secret access key, and region (us-est-2)
 
 ```
-### Run local Redis
-```
-# Create a docker container for redis
-docker run --name redis -d -p 6379:6379 redis
-```
-###### NOTE: Once the container is created you may start the container using the following
-```
-docker start redis
-```
 ### Flask
 ```
 # Set the following options in your terminal

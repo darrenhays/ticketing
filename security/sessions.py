@@ -18,7 +18,6 @@ def is_valid_session(f):
             return f(*args, **kwargs)
         else:
             return Response(json.dumps({'message': 'unable to authenticate'}), status=403)
-
     return wrapped
 
 

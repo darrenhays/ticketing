@@ -1,29 +1,21 @@
-import json
 import logging
-import uuid
-from cache.cache import Cache
+from models.abstract_model import AbstractModel
+from settings import SESSIONS_TABLE_NAME
 
 logger = logging.getLogger()
 
 
-class SessionModel:
-    def __init__(self):
-        self.cache = Cache()
+class SessionModel(AbstractModel):
+    table_name = SESSIONS_TABLE_NAME
 
     def create_session(self, user_id):
-        id = str(uuid.uuid4())
         item = {
-            'id': id,
             'user_id': user_id
         }
-        self.cache.set(id, json.dumps(item))
-        return item
+        return self.insert(item)
 
     def delete_session(self, session_id):
-        self.cache.delete(session_id)
+        return self.delete(session_id)
 
     def get_session(self, session_id):
-        session_record = self.cache.get(session_id)
-        if session_record:
-            return json.loads(session_record)
-        return None
+        return self.get(session_id)
