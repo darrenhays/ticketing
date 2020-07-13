@@ -16,18 +16,18 @@ mkvirtualenv -p python3 ticketing
 
 # Activate virtual environment
 workon ticketing
-
+```
+### Install requirements
+```
 # Install environment requirements from file
 pip install -r requirements.txt
 ```
-### Redis
+### Configure AWS
+- Request AWS access from an admin
 ```
-# Create a docker container for redis
-docker run --name redis -d -p 6379:6379 redis
-```
-###### NOTE: Once the container is created you may start the container using the following
-```
-docker start redis
+aws configure
+# Provide access key ID, secret access key, and region (us-est-2)
+
 ```
 ### Flask
 ```

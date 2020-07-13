@@ -2,11 +2,12 @@ import json
 import requests
 import unittest
 from models.user_model import UserModel
-from objects.user import User
+from settings import BASE_URL
 from unittest.mock import patch
 
 
 class TestProject(unittest.TestCase):
+    base_url = BASE_URL
     @patch('models.user_model.AbstractModel.insert')
     @patch('models.user_model.UserModel.get_user_by_email')
     def test_user_model_creates_a_user_record(self, mock_get_user_by_email, mock_insert):
@@ -52,7 +53,7 @@ class TestProject(unittest.TestCase):
 
         # create user
         create_user_response = requests.request(
-            url='http://localhost:5000/users',
+            url=self.base_url + '/users',
             method='POST',
             data=json.dumps({
                 "email": user_email,
@@ -71,7 +72,7 @@ class TestProject(unittest.TestCase):
 
         # create session
         create_session_response = requests.request(
-            url='http://localhost:5000/sessions',
+            url=self.base_url + '/sessions',
             method='POST',
             data=json.dumps({
                 "email": user_email,
@@ -84,7 +85,7 @@ class TestProject(unittest.TestCase):
         
         # get user
         get_user_response = requests.request(
-            url='http://localhost:5000/users/{}'.format(user_id),
+            url=self.base_url + '/users/{}'.format(user_id),
             method='GET',
             headers={
                 "session_id": session_id
@@ -101,7 +102,7 @@ class TestProject(unittest.TestCase):
         # update user
         user_email = "newtest@test.com"
         update_user_response = requests.request(
-            url='http://localhost:5000/users/{}'.format(user_id),
+            url=self.base_url + '/users/{}'.format(user_id),
             method='PATCH',
             data=json.dumps({
                 "email": user_email,
@@ -121,7 +122,7 @@ class TestProject(unittest.TestCase):
 
         # delete user
         delete_user_response = requests.request(
-            url='http://localhost:5000/users/{}'.format(user_id),
+            url=self.base_url + '/users/{}'.format(user_id),
             method='DELETE',
             headers={
                 "session_id": session_id
@@ -132,7 +133,7 @@ class TestProject(unittest.TestCase):
 
         # delete session
         delete_session_response = requests.request(
-            url='http://localhost:5000/sessions/{}'.format(session_id),
+            url=self.base_url + '/sessions/{}'.format(session_id),
             method='DELETE',
             headers={
                 "session_id": session_id

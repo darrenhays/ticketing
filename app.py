@@ -1,3 +1,4 @@
+import json
 import logging
 from api.sessions import sessions_blueprint
 from api.users import users_blueprint
@@ -33,3 +34,8 @@ def after_request_handler(response):
 
 
 app.after_request(after_request_handler)
+
+
+@app.route('/', methods=['GET'])
+def index():
+    return Response(json.dumps({'message': 'success'}), status=200)
