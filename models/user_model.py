@@ -11,14 +11,6 @@ class EmailExistsError(Exception):
     pass
 
 
-class InvalidAttributeError(Exception):
-    pass
-
-
-class RequiredAttributeError(Exception):
-    pass
-
-
 class UserModel(AbstractModel):
     table_name = USERS_TABLE_NAME
     required_attributes = [
@@ -31,12 +23,8 @@ class UserModel(AbstractModel):
     ]
 
     def create_user(self, attributes={}):
-        if not self.contains_required_attributes(attributes):
-            raise RequiredAttributeError('the following attributes are required: ' + ', '.join(self.required_attributes))
         if self.get_user_by_email(attributes.get('email')):
             raise EmailExistsError('email already exists')
-        if not self.attributes_are_valid(attributes):
-            raise InvalidAttributeError('only the following attributes are allowed: ' + ', '.join(self.required_attributes + self.optional_attributes))
         attributes['password'] = str(Password(attributes.get('password')))
         return self.insert(attributes)
 
@@ -61,20 +49,6 @@ class UserModel(AbstractModel):
         user_record_by_email = self.get_user_by_email(updated_attributes.get('email'))
         if user_record_by_email and user_record_by_email.get('id') != user_id:
             raise EmailExistsError('email already exists')
-        if not self.attributes_are_valid(updated_attributes):
-            raise InvalidAttributeError('only the following attributes are allowed: ' + ', '.join(self.required_attributes + self.optional_attributes))
         if updated_attributes.get('password'):
             updated_attributes['password'] = str(Password(updated_attributes.get('password')))
         return self.update(user_id, updated_attributes)
-
-    def contains_required_attributes(self, attributes):
-        for attribute in self.required_attributes:
-            if attribute not in attributes.keys():
-                return False
-        return True
-
-    def attributes_are_valid(self, attributes):
-        for key in attributes.keys():
-            if key not in self.required_attributes + self.optional_attributes:
-                return False
-        return True
