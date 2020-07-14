@@ -1,7 +1,17 @@
 from models.abstract_model import AbstractModel
+from settings import EVENTS_TABLE_NAME
 
 
 class EventModel(AbstractModel):
+    table_name = EVENTS_TABLE_NAME
+    required_attributes = [
+        'title',
+        'user_id',
+        'capacity'
+    ]
+    optional_attributes = [
+        'description'
+    ]
 
     def create_event(self, attributes={}):
         return self.insert(attributes)
