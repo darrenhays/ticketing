@@ -1,5 +1,6 @@
 import json
 import logging
+from api.events import events_blueprint
 from api.sessions import sessions_blueprint
 from api.users import users_blueprint
 from flask import Flask, Response, request
@@ -9,6 +10,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 app = Flask(__name__)
+app.register_blueprint(events_blueprint)
 app.register_blueprint(sessions_blueprint)
 app.register_blueprint(users_blueprint)
 
