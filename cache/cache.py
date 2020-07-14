@@ -8,7 +8,7 @@ Keeping files around for reference and future development
 
 class Cache:
     def __init__(self):
-        self.client = redis.Redis(host=CACHE_HOST, port=CACHE_PORT, socket_connect_timeout=2)
+        self.client = redis.Redis(host=CACHE_HOST, port=CACHE_PORT)
 
     def get(self, key):
         return self.client.get(key)
