@@ -34,7 +34,7 @@ def update_event(event_id):
 
 @events_blueprint.route('/events/<event_id>', methods=['GET'])
 @is_valid_session
-def get_events(event_id):
+def get_event(event_id):
     event_record = EventModel().get_event(event_id)
     return Response(json.dumps(event_record), status=200)
 
