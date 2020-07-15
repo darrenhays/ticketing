@@ -194,7 +194,7 @@ class TestProject(unittest.TestCase):
         ticket_type_price = "9001"
         ticket_type_description = "Front row seat"
         create_ticket_type_response = requests.request(
-            url=self.base_url + '/ticket_types',
+            url=self.base_url + '/events/{}/ticket-types'.format(event_id),
             method='POST',
             headers={
                 "session_id": session_id
@@ -219,7 +219,7 @@ class TestProject(unittest.TestCase):
 
         # get ticket type
         get_ticket_type_response = requests.request(
-            url=self.base_url + '/ticket_types/{}'.format(ticket_type_id),
+            url=self.base_url + '/events/{}/ticket-types/{}'.format(event_id, ticket_type_id),
             method='GET',
             headers={
                 "session_id": session_id
@@ -238,7 +238,7 @@ class TestProject(unittest.TestCase):
         # update ticket type
         ticket_type_title = "Updated Ticket Type Title"
         update_ticket_type_response = requests.request(
-            url=self.base_url + '/ticket_types/{}'.format(ticket_type_id),
+            url=self.base_url + '/events/{}/ticket-types/{}'.format(event_id, ticket_type_id),
             method='PATCH',
             data=json.dumps({
                 "title": ticket_type_title
@@ -259,7 +259,7 @@ class TestProject(unittest.TestCase):
 
         # delete ticket type
         delete_ticket_type_response = requests.request(
-            url=self.base_url + '/ticket_types/{}'.format(ticket_type_id),
+            url=self.base_url + '/events/{}/ticket-types/{}'.format(event_id, ticket_type_id),
             method='DELETE',
             headers={
                 "session_id": session_id

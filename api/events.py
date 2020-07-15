@@ -11,8 +11,8 @@ events_blueprint = Blueprint('events', __name__)
 @is_valid_session
 def create_event():
     session_id = request.headers.get('session_id')
-    attributes = json.loads(request.data)
     user_id = SessionModel().get_session(session_id).get('user_id')
+    attributes = json.loads(request.data)
     attributes['user_id'] = user_id
     try:
         event_record = EventModel().create_event(attributes)
@@ -33,7 +33,6 @@ def update_event(event_id):
 
 
 @events_blueprint.route('/events/<event_id>', methods=['GET'])
-@is_valid_session
 def get_event(event_id):
     event_record = EventModel().get_event(event_id)
     return Response(json.dumps(event_record), status=200)

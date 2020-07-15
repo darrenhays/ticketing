@@ -6,9 +6,9 @@ from security.sessions import is_valid_session
 ticket_types_blueprint = Blueprint('ticket_types', __name__)
 
 
-@ticket_types_blueprint.route('/ticket_types', methods=['POST'])
+@ticket_types_blueprint.route('/events/<event_id>/ticket-types', methods=['POST'])
 @is_valid_session
-def create_ticket_type():
+def create_ticket_type(event_id):
     attributes = json.loads(request.data)
     try:
         ticket_type_record = TicketTypeModel().create_ticket_type(attributes)
@@ -17,9 +17,9 @@ def create_ticket_type():
     return Response(json.dumps(ticket_type_record), status=200)
 
 
-@ticket_types_blueprint.route('/ticket_types/<ticket_type_id>', methods=['PATCH'])
+@ticket_types_blueprint.route('/events/<event_id>/ticket-types/<ticket_type_id>', methods=['PATCH'])
 @is_valid_session
-def update_ticket_type(ticket_type_id):
+def update_ticket_type(event_id, ticket_type_id):
     updated_attributes = json.loads(request.data)
     try:
         ticket_type_record = TicketTypeModel().update_ticket_type(ticket_type_id, updated_attributes)
@@ -28,16 +28,16 @@ def update_ticket_type(ticket_type_id):
     return Response(json.dumps(ticket_type_record), status=200)
 
 
-@ticket_types_blueprint.route('/ticket_types/<ticket_type_id>', methods=['GET'])
+@ticket_types_blueprint.route('/events/<event_id>/ticket-types/<ticket_type_id>', methods=['GET'])
 @is_valid_session
-def get_ticket_type(ticket_type_id):
+def get_ticket_type(event_id, ticket_type_id):
     ticket_type_record = TicketTypeModel().get_ticket_type(ticket_type_id)
     return Response(json.dumps(ticket_type_record), status=200)
 
 
-@ticket_types_blueprint.route('/ticket_types/<ticket_type_id>', methods=['DELETE'])
+@ticket_types_blueprint.route('/events/<event_id>/ticket-types/<ticket_type_id>', methods=['DELETE'])
 @is_valid_session
-def delete_ticket_type(ticket_type_id):
+def delete_ticket_type(event_id, ticket_type_id):
     if TicketTypeModel().delete_ticket_type(ticket_type_id):
         response = {'message': 'success'}
     else:
