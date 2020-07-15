@@ -45,7 +45,6 @@ def get_user(user_id):
 @user_is_session_user
 def delete_user(user_id):
     if UserModel().delete_user(user_id):
-        response = {'message': 'success'}
+        return Response(json.dumps({'message': 'success'}), status=200)
     else:
-        response = {'message': 'failure'}
-    return Response(json.dumps(response), status=200)
+        return Response(json.dumps({'message': 'failure'}), status=409)

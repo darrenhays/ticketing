@@ -2,6 +2,7 @@ import json
 from flask import Blueprint, Response, request
 from models.event_model import EventModel
 from models.session_model import SessionModel
+from security.events import is_users_event
 from security.sessions import is_valid_session
 
 events_blueprint = Blueprint('events', __name__)
@@ -23,6 +24,7 @@ def create_event():
 
 @events_blueprint.route('/events/<event_id>', methods=['PATCH'])
 @is_valid_session
+@is_users_event
 def update_event(event_id):
     updated_attributes = json.loads(request.data)
     try:
@@ -40,9 +42,9 @@ def get_event(event_id):
 
 @events_blueprint.route('/events/<event_id>', methods=['DELETE'])
 @is_valid_session
+@is_users_event
 def delete_event(event_id):
     if EventModel().delete_event(event_id):
-        response = {'message': 'success'}
+        return Response(json.dumps({'message': 'success'}), status=200)
     else:
-        response = {'message': 'failure'}
-    return Response(json.dumps(response), status=200)
+        return Response(json.dumps({'message': 'failure'}), status=409)
