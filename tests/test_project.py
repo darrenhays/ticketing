@@ -42,12 +42,16 @@ class TestProject(unittest.TestCase):
 
     def test_create_authenticate_get_update_delete_user_delete_session_end_to_end(self):
         user_email = 'end_to_end_test_user@test.com'
+        updated_user_email = 'newtest@test.com'
         user_password = 'testpassword'
         user_first_name = 'first'
         user_last_name = 'last'
 
         # delete user if not successfully deleted in last run
         user = UserModel().get_user_by_email(user_email)
+        if user:
+            UserModel().delete_user(user.get('id'))
+        user = UserModel().get_user_by_email(updated_user_email)  # if failure happened after update
         if user:
             UserModel().delete_user(user.get('id'))
 
@@ -100,7 +104,7 @@ class TestProject(unittest.TestCase):
         }
 
         # update user
-        user_email = "newtest@test.com"
+        user_email = updated_user_email
         update_user_response = requests.request(
             url=self.base_url + '/users/{}'.format(user_id),
             method='PATCH',
@@ -119,6 +123,161 @@ class TestProject(unittest.TestCase):
             "first_name": user_first_name,
             "last_name": user_last_name
         }
+
+        # create event
+        event_title = "Test Event"
+        event_capacity = ">9000"
+        event_description = "Live Donkey Show!"
+        create_event_response = requests.request(
+            url=self.base_url + '/events',
+            method='POST',
+            headers={
+                "session_id": session_id
+            },
+            data=json.dumps({
+                "title": event_title,
+                "capacity": event_capacity,
+                "description": event_description,
+                "user_id": user_id
+            })
+        )
+        create_event_response_body = json.loads(create_event_response.text)
+        event_id = create_event_response_body.pop('id')
+        expected_create_event_response_body = {
+                "title": event_title,
+                "capacity": event_capacity,
+                "description": event_description,
+                "user_id": user_id
+        }
+
+        # get event
+        get_event_response = requests.request(
+            url=self.base_url + '/events/{}'.format(event_id),
+            method='GET',
+            headers={
+                "session_id": session_id
+            }
+        )
+        get_event_response_body = json.loads(get_event_response.text)
+        expected_get_event_response_body = {
+            "id": event_id,
+            "title": event_title,
+            "capacity": event_capacity,
+            "description": event_description,
+            "user_id": user_id
+        }
+
+        # update event
+        event_title = "Updated Event Title"
+        update_event_response = requests.request(
+            url=self.base_url + '/events/{}'.format(event_id),
+            method='PATCH',
+            data=json.dumps({
+                "title": event_title
+            }),
+            headers={
+                "session_id": session_id
+            }
+        )
+        update_event_response_body = json.loads(update_event_response.text)
+        expected_update_event_response_body = {
+            "id": event_id,
+            "title": event_title,
+            "capacity": event_capacity,
+            "description": event_description,
+            "user_id": user_id
+        }
+
+        # create ticket_type
+        ticket_type_title = "Test Ticket Type"
+        ticket_type_quantity = "42"
+        ticket_type_price = "9001"
+        ticket_type_description = "Front row seat"
+        create_ticket_type_response = requests.request(
+            url=self.base_url + '/ticket_types',
+            method='POST',
+            headers={
+                "session_id": session_id
+            },
+            data=json.dumps({
+                "title": ticket_type_title,
+                "quantity": ticket_type_quantity,
+                "description": ticket_type_description,
+                "price": ticket_type_price,
+                "event_id": event_id
+            })
+        )
+        create_ticket_type_response_body = json.loads(create_ticket_type_response.text)
+        ticket_type_id = create_ticket_type_response_body.pop('id')
+        expected_create_ticket_type_response_body = {
+                "title": ticket_type_title,
+                "quantity": ticket_type_quantity,
+                "description": ticket_type_description,
+                "price": ticket_type_price,
+                "event_id": event_id
+        }
+
+        # get ticket type
+        get_ticket_type_response = requests.request(
+            url=self.base_url + '/ticket_types/{}'.format(ticket_type_id),
+            method='GET',
+            headers={
+                "session_id": session_id
+            }
+        )
+        get_ticket_type_response_body = json.loads(get_ticket_type_response.text)
+        expected_get_ticket_type_response_body = {
+            "id": ticket_type_id,
+            "title": ticket_type_title,
+            "quantity": ticket_type_quantity,
+            "description": ticket_type_description,
+            "price": ticket_type_price,
+            "event_id": event_id
+        }
+
+        # update ticket type
+        ticket_type_title = "Updated Ticket Type Title"
+        update_ticket_type_response = requests.request(
+            url=self.base_url + '/ticket_types/{}'.format(ticket_type_id),
+            method='PATCH',
+            data=json.dumps({
+                "title": ticket_type_title
+            }),
+            headers={
+                "session_id": session_id
+            }
+        )
+        update_ticket_type_response_body = json.loads(update_ticket_type_response.text)
+        expected_update_ticket_type_response_body = {
+            "id": ticket_type_id,
+            "title": ticket_type_title,
+            "quantity": ticket_type_quantity,
+            "description": ticket_type_description,
+            "price": ticket_type_price,
+            "event_id": event_id
+        }
+
+        # delete ticket type
+        delete_ticket_type_response = requests.request(
+            url=self.base_url + '/ticket_types/{}'.format(ticket_type_id),
+            method='DELETE',
+            headers={
+                "session_id": session_id
+            }
+        )
+        delete_ticket_type_response_body = json.loads(delete_ticket_type_response.text)
+        expected_delete_ticket_type_response_body = {'message': 'success'}
+
+        # delete event
+        delete_event_response = requests.request(
+            url=self.base_url + '/events/{}'.format(event_id),
+            method='DELETE',
+            headers={
+                "session_id": session_id
+            }
+        )
+        delete_event_response_body = json.loads(delete_event_response.text)
+        expected_delete_event_response_body = {'message': 'success'}
 
         # delete user
         delete_user_response = requests.request(
@@ -157,6 +316,40 @@ class TestProject(unittest.TestCase):
         # testing update user
         assert update_user_response.status_code == 200
         assert update_user_response_body == expected_update_user_response_body
+
+        # testing create event
+        assert create_event_response.status_code == 200
+        assert create_event_response_body == expected_create_event_response_body
+        assert event_id
+
+        # testing get event
+        assert get_event_response.status_code == 200
+        assert get_event_response_body == expected_get_event_response_body
+
+        # testing update event
+        assert update_event_response.status_code == 200
+        assert update_event_response_body == expected_update_event_response_body
+
+        # testing create ticket type
+        assert create_ticket_type_response.status_code == 200
+        assert create_ticket_type_response_body == expected_create_ticket_type_response_body
+        assert ticket_type_id
+
+        # testing get event
+        assert get_ticket_type_response.status_code == 200
+        assert get_ticket_type_response_body == expected_get_ticket_type_response_body
+
+        # testing update ticket type
+        assert update_ticket_type_response.status_code == 200
+        assert update_ticket_type_response_body == expected_update_ticket_type_response_body
+
+        # testing delete ticket type
+        assert delete_ticket_type_response.status_code == 200
+        assert delete_ticket_type_response_body == expected_delete_ticket_type_response_body
+
+        # testing delete event
+        assert delete_event_response.status_code == 200
+        assert delete_event_response_body == expected_delete_event_response_body
 
         # testing delete user
         assert delete_user_response.status_code == 200
