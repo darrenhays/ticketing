@@ -33,7 +33,6 @@ def update_ticket_type(event_id, ticket_type_id):
 
 
 @ticket_types_blueprint.route('/events/<event_id>/ticket-types/<ticket_type_id>', methods=['GET'])
-@is_valid_session
 def get_ticket_type(event_id, ticket_type_id):
     ticket_type_record = TicketTypeModel().get_ticket_type(ticket_type_id)
     return Response(json.dumps(ticket_type_record), status=200)

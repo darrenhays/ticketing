@@ -19,7 +19,7 @@ def is_users_event(f):
         if user_id == event_user_id:
             return f(*args, **kwargs)
         else:
-            return Response(json.dumps({'message': 'unauthorized'}), status=401)
+            return Response(json.dumps({'message': 'unauthorized'}), status=403)
     return wrapped
 
 
@@ -32,5 +32,5 @@ def is_events_ticket_type(f):
         if event_id == ticket_type_event_id:
             return f(*args, **kwargs)
         else:
-            return Response(json.dumps({'message': 'unauthorized'}), status=401)
+            return Response(json.dumps({'message': 'unauthorized'}), status=403)
     return wrapped
