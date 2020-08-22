@@ -68,6 +68,7 @@ class TestProject(unittest.TestCase):
         )
         create_user_response_body = json.loads(create_user_response.text)
         user_id = create_user_response_body.pop('id')
+        user_created = create_user_response_body.pop('created')
         expected_create_user_response_body = {
             "email": user_email,
             "first_name": user_first_name,
@@ -100,7 +101,8 @@ class TestProject(unittest.TestCase):
             "id": user_id,
             "email": user_email,
             "first_name": user_first_name,
-            "last_name": user_last_name
+            "last_name": user_last_name,
+            "created": user_created
         }
 
         # update user
@@ -117,11 +119,13 @@ class TestProject(unittest.TestCase):
             }
         )
         update_user_response_body = json.loads(update_user_response.text)
+        user_updated = update_user_response_body.pop('updated')
         expected_update_user_response_body = {
             "id": user_id,
             "email": user_email,
             "first_name": user_first_name,
-            "last_name": user_last_name
+            "last_name": user_last_name,
+            "created": user_created
         }
 
         # create event
@@ -143,6 +147,7 @@ class TestProject(unittest.TestCase):
         )
         create_event_response_body = json.loads(create_event_response.text)
         event_id = create_event_response_body.pop('id')
+        event_created = create_event_response_body.pop('created')
         expected_create_event_response_body = {
                 "title": event_title,
                 "capacity": event_capacity,
@@ -164,7 +169,8 @@ class TestProject(unittest.TestCase):
             "title": event_title,
             "capacity": event_capacity,
             "description": event_description,
-            "user_id": user_id
+            "user_id": user_id,
+            "created": event_created
         }
 
         # update event
@@ -180,17 +186,19 @@ class TestProject(unittest.TestCase):
             }
         )
         update_event_response_body = json.loads(update_event_response.text)
+        event_updated = update_event_response_body.pop('updated')
         expected_update_event_response_body = {
             "id": event_id,
             "title": event_title,
             "capacity": event_capacity,
             "description": event_description,
-            "user_id": user_id
+            "user_id": user_id,
+            "created": event_created
         }
 
         # create ticket_type
         ticket_type_title = "Test Ticket Type"
-        ticket_type_quantity = "42"
+        ticket_type_limit = "42"
         ticket_type_price = "9001"
         ticket_type_description = "Front row seat"
         create_ticket_type_response = requests.request(
@@ -201,7 +209,7 @@ class TestProject(unittest.TestCase):
             },
             data=json.dumps({
                 "title": ticket_type_title,
-                "quantity": ticket_type_quantity,
+                "limit": ticket_type_limit,
                 "description": ticket_type_description,
                 "price": ticket_type_price,
                 "event_id": event_id
@@ -209,12 +217,13 @@ class TestProject(unittest.TestCase):
         )
         create_ticket_type_response_body = json.loads(create_ticket_type_response.text)
         ticket_type_id = create_ticket_type_response_body.pop('id')
+        ticket_type_created = create_ticket_type_response_body.pop('created')
         expected_create_ticket_type_response_body = {
-                "title": ticket_type_title,
-                "quantity": ticket_type_quantity,
-                "description": ticket_type_description,
-                "price": ticket_type_price,
-                "event_id": event_id
+            "title": ticket_type_title,
+            "limit": ticket_type_limit,
+            "description": ticket_type_description,
+            "price": ticket_type_price,
+            "event_id": event_id
         }
 
         # get ticket type
@@ -229,10 +238,11 @@ class TestProject(unittest.TestCase):
         expected_get_ticket_type_response_body = {
             "id": ticket_type_id,
             "title": ticket_type_title,
-            "quantity": ticket_type_quantity,
+            "limit": ticket_type_limit,
             "description": ticket_type_description,
             "price": ticket_type_price,
-            "event_id": event_id
+            "event_id": event_id,
+            "created": ticket_type_created
         }
 
         # update ticket type
@@ -248,13 +258,15 @@ class TestProject(unittest.TestCase):
             }
         )
         update_ticket_type_response_body = json.loads(update_ticket_type_response.text)
+        update_ticket_type_response_body.pop('updated')
         expected_update_ticket_type_response_body = {
             "id": ticket_type_id,
             "title": ticket_type_title,
-            "quantity": ticket_type_quantity,
+            "limit": ticket_type_limit,
             "description": ticket_type_description,
             "price": ticket_type_price,
-            "event_id": event_id
+            "event_id": event_id,
+            "created": ticket_type_created
         }
 
         # delete ticket type

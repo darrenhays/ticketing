@@ -10,5 +10,5 @@ class Ticket(AbstractObject):
         'ticket_type_id',
         'ticket_type_title',
         'ticket_type_description',
-        'price'
+        'amount_paid'
     ]

@@ -6,6 +6,8 @@ class User(AbstractObject):
     sensitive_attributes = ['password']
     allowed_attributes = [
         'id',
+        'created',
+        'updated',
         'email',
         'first_name',
         'last_name'
