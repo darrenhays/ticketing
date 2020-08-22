@@ -119,7 +119,7 @@ class TestProject(unittest.TestCase):
             }
         )
         update_user_response_body = json.loads(update_user_response.text)
-        user_updated = update_user_response_body.pop('updated')
+        update_user_response_body.pop('updated')
         expected_update_user_response_body = {
             "id": user_id,
             "email": user_email,
@@ -186,7 +186,7 @@ class TestProject(unittest.TestCase):
             }
         )
         update_event_response_body = json.loads(update_event_response.text)
-        event_updated = update_event_response_body.pop('updated')
+        update_event_response_body.pop('updated')
         expected_update_event_response_body = {
             "id": event_id,
             "title": event_title,
