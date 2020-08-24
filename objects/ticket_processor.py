@@ -13,7 +13,7 @@ class TicketProcessor:
         ticket_type_record = TicketTypeModel().get_ticket_type(ticket_record.get('ticket_type_id'))
         ticket_record['ticket_type_title'] = ticket_type_record.get('title')
         ticket_record['ticket_type_description'] = ticket_type_record.get('description')
-        ticket_record['price'] = ticket_type_record.get('price')
+        ticket_record['amount_paid'] = ticket_type_record.get('price')
         for i in range(ticket_quantity):
             current_ticket = TicketModel().create_ticket(ticket_record.copy())
             created_tickets.append(current_ticket)

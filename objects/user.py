@@ -1,13 +1,11 @@
-from objects.abstract_object import AbstractObject
+from objects.abstract_model_object import AbstractModelObject
 
 
-class User(AbstractObject):
+class User(AbstractModelObject):
     __attributes = {}
     sensitive_attributes = ['password']
     allowed_attributes = [
         'id',
-        'created',
-        'updated',
         'email',
         'first_name',
         'last_name'

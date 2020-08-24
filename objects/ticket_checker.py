@@ -15,8 +15,8 @@ class TicketChecker:
 
     def is_oversold(self):
         logger.info("########## {} is_oversold ##########".format(self.__class__.__name__))
-        event_ticket_total = EventModel().get_number_of_tickets_by_event(self.event_id)
+        event_ticket_total = len(TicketModel().get_tickets_by_event(self.event_id))
         event_capacity = int(EventModel().get_event(self.event_id).get('capacity'))
-        ticket_type_ticket_total = EventModel().get_number_of_tickets_by_ticket_type(self.ticket_type_id)
+        ticket_type_ticket_total = len(TicketModel().get_tickets_by_ticket_type(self.ticket_type_id))
         ticket_type_limit = int(TicketTypeModel().get_ticket_type(self.ticket_type_id).get('limit'))
         return event_ticket_total > event_capacity or ticket_type_ticket_total > ticket_type_limit

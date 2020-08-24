@@ -54,19 +54,17 @@ def get_purchase(purchase_id):
 @is_valid_session
 @is_users_purchase
 def refund_items(purchase_id):
-    attributes = json.loads(request.data)
+    item_ids_to_refund = json.loads(request.data)
     purchase_record = PurchaseModel().get_purchase(purchase_id)
-    purchased_items = purchase_record.get('purchased_items')
-    refunded_items = purchase_record.get('refunded_items')
-    for item_to_refund in attributes:
-        for i, purchased_item in enumerate(purchased_items):
-            if item_to_refund.get('item_id') == purchased_item.get('id'):
-                refunded_items.append(purchased_items.pop(i))
+    updated_purchase_record = {}
+    updated_purchase_record['purchased_items'] = purchase_record.get('purchased_items', [])
+    updated_purchase_record['refunded_items'] = purchase_record.get('refunded_items', [])
+    for item_id_to_refund in item_ids_to_refund:
+        for i, purchased_item in enumerate(updated_purchase_record['purchased_items']):
+            if item_id_to_refund == purchased_item.get('id'):
+                updated_purchase_record['refunded_items'].append(updated_purchase_record['purchased_items'].pop(i))
                 break
         else:
             return Response(json.dumps({"message": "one or more items are not available for refund"}), status=400)
-    purchase_record['purchased_items'] = purchased_items
-    purchase_record['refunded_items'] = refunded_items
-    purchase_record.pop('id')
-    purchase_record = PurchaseModel().update_purchase(purchase_id, purchase_record)
+    purchase_record = PurchaseModel().update_purchase(purchase_id, updated_purchase_record)
     return Response(json.dumps(purchase_record), status=200)
