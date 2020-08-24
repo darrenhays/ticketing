@@ -1,5 +1,8 @@
+import logging
 from models.abstract_model import AbstractModel
 from settings import EVENTS_TABLE_NAME
+
+logger = logging.getLogger()
 
 
 class EventModel(AbstractModel):

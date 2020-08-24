@@ -1,4 +1,5 @@
 import boto3
+import datetime
 import logging
 import uuid
 
@@ -30,11 +31,12 @@ class AbstractModel:
         if not self.attributes_are_valid(item):
             raise InvalidAttributeError('only the following attributes are allowed: ' + ', '.join(self.required_attributes + self.optional_attributes))
         item['id'] = str(uuid.uuid4())
+        item['created'] = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         try:
             self.table.put_item(Item=item)
         except Exception as e:
             logger.error(e)
-            return {}         
+            return {}
         return item
 
     def get(self, id):
@@ -54,6 +56,7 @@ class AbstractModel:
         item = self.get(id)
         for attribute, value in updated_attributes.items():
             item[attribute] = value
+        item['updated'] = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         try:
             self.table.put_item(Item=item)
         except Exception as e:

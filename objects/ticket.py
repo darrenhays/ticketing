@@ -1,7 +1,7 @@
-from objects.abstract_object import AbstractObject
+from objects.abstract_model_object import AbstractModelObject
 
 
-class Ticket(AbstractObject):
+class Ticket(AbstractModelObject):
     allowed_attributes = [
         'id',
         'event_id',
@@ -10,5 +10,5 @@ class Ticket(AbstractObject):
         'ticket_type_id',
         'ticket_type_title',
         'ticket_type_description',
-        'price'
+        'amount_paid'
     ]

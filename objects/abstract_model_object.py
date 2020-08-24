@@ -4,7 +4,7 @@ import logging
 logger = logging.getLogger()
 
 
-class AbstractObject:
+class AbstractModelObject:
     __attributes = {}
     sensitive_attributes = []
     allowed_attributes = [] + sensitive_attributes
@@ -12,6 +12,7 @@ class AbstractObject:
     def __init__(self, attributes={}):
         logger.info("########## {} __init__ ##########".format(self.__class__.__name__))
         logger.info("attributes: {}".format(attributes))
+        self.allowed_attributes.extend(['created', 'updated'])
         self.load(attributes)
 
     def __getattr__(self, key):
