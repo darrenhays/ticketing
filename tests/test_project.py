@@ -373,6 +373,49 @@ class TestProject(unittest.TestCase):
         }
 
         # refund purchase
+        refund_purchase_response = requests.request(
+            url=self.base_url + '/purchases/{}/refund'.format(purchase_id),
+            method='POST',
+            data=json.dumps(purchased_items),
+            headers={
+                "session_id": session_id
+            }
+        )
+        refund_purchase_response_body = json.loads(refund_purchase_response.text)
+        # popping these items as they are unknown
+        refund_purchase_response_body.pop('updated')
+        for item in refund_purchase_response_body['refunded_items']:
+            item.pop('id')
+            item.pop('created')
+            item.pop('updated')
+
+        expected_refund_purchase_response_body = {
+            "user_id": user_id,
+            "total": str(float(ticket_type_price) * int(ticket_quantity)),
+            "purchased_items": [],
+            "refunded_items": [
+                {
+                    "event_id": event_id,
+                    "ticket_type_id": ticket_type_id,
+                    "event_title": event_title,
+                    "event_description": event_description,
+                    "ticket_type_title": ticket_type_title,
+                    "ticket_type_description": ticket_type_description,
+                    "amount_paid": ticket_type_price
+                },
+                {
+                    "event_id": event_id,
+                    "ticket_type_id": ticket_type_id,
+                    "event_title": event_title,
+                    "event_description": event_description,
+                    "ticket_type_title": ticket_type_title,
+                    "ticket_type_description": ticket_type_description,
+                    "amount_paid": ticket_type_price
+                }
+            ],
+            "created": purchase_created,
+            "id": purchase_id,
+        }
 
         # delete ticket type
         delete_ticket_type_response = requests.request(
@@ -468,9 +511,13 @@ class TestProject(unittest.TestCase):
         assert create_purchase_response_body == expected_create_purchase_response_body
         assert purchase_id
 
-        # testing get event
-        assert get_event_response.status_code == 200
+        # testing get purchase
+        assert get_purchase_response.status_code == 200
         assert get_purchase_response_body == expected_get_purchase_response_body
+
+        # testing refund purchase
+        assert refund_purchase_response.status_code == 200
+        assert refund_purchase_response_body == expected_refund_purchase_response_body
 
         # testing delete ticket type
         assert delete_ticket_type_response.status_code == 200
