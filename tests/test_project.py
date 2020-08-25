@@ -337,8 +337,11 @@ class TestProject(unittest.TestCase):
             }
         )
         get_purchase_response_body = json.loads(get_purchase_response.text)
+        purchased_items = []  # to be used in refund purchase
+        # popping these items as they are unknown
+        get_purchase_response_body.pop('id')
         for item in get_purchase_response_body['purchased_items']:
-            item.pop('id')
+            purchased_items.append(item.pop('id'))
             item.pop('created')
             item.pop('updated')
         expected_get_purchase_response_body = {
@@ -368,6 +371,7 @@ class TestProject(unittest.TestCase):
             "created": purchase_created,
             "updated": purchase_updated
         }
+
         # refund purchase
 
         # delete ticket type
@@ -463,6 +467,10 @@ class TestProject(unittest.TestCase):
         assert create_purchase_response.status_code == 200
         assert create_purchase_response_body == expected_create_purchase_response_body
         assert purchase_id
+
+        # testing get event
+        assert get_event_response.status_code == 200
+        assert get_purchase_response_body == expected_get_purchase_response_body
 
         # testing delete ticket type
         assert delete_ticket_type_response.status_code == 200
