@@ -7,11 +7,11 @@ logger = logging.getLogger()
 
 
 class TicketChecker:
-    def __init__(self, ticket_attributes): #FIXME this should receive a ticket object instead
+    def __init__(self, ticket):
         logger.info("########## {} __init__ ##########".format(self.__class__.__name__))
-        logger.info("ticket_attributes: {}".format(ticket_attributes))
-        self.event_id = ticket_attributes.get('event_id')
-        self.ticket_type_id = ticket_attributes.get('ticket_type_id')
+        logger.info("ticket: {}".format(ticket.jsonify()))
+        self.event_id = ticket.event_id
+        self.ticket_type_id = ticket.ticket_type_id
 
     def is_oversold(self):
         logger.info("########## {} is_oversold ##########".format(self.__class__.__name__))

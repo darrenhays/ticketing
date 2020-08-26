@@ -4,6 +4,7 @@ from flask import Blueprint, Response, request
 from models.purchase_model import PurchaseModel
 from models.ticket_model import TicketModel
 from objects.payment_handler import PaymentHandler
+from objects.ticket import Ticket
 from objects.ticket_checker import TicketChecker
 from objects.ticket_processor import TicketProcessor
 from security.purchases import is_users_purchase
@@ -21,7 +22,7 @@ def create_purchase():
     created_tickets = []
     for requested_ticket_record in requested_tickets:
         created_tickets.extend(TicketProcessor().process_record(requested_ticket_record))
-        if TicketChecker(requested_ticket_record).is_oversold():
+        if TicketChecker(Ticket(requested_ticket_record)).is_oversold():
             for item in created_tickets:
                 TicketModel().delete_ticket(item.get('id'))
             return Response(json.dumps({"message": "one or more items are no longer available"}), status=400)
