@@ -1,6 +1,7 @@
 import json
 import requests
 import unittest
+import uuid
 from models.user_model import UserModel
 from settings import BASE_URL
 from unittest.mock import patch
@@ -41,19 +42,11 @@ class TestProject(unittest.TestCase):
         assert user_record['password'] == user_password
 
     def test_create_authenticate_get_update_delete_user_delete_session_end_to_end(self):
-        user_email = 'end_to_end_test_user@test.com'
-        updated_user_email = 'newtest@test.com'
+        user_email = 'end_to_end_test_user_{}@test.com'.format(str(uuid.uuid4()))
+        updated_user_email = 'newtest_{}@test.com'.format(str(uuid.uuid4()))
         user_password = 'testpassword'
         user_first_name = 'first'
         user_last_name = 'last'
-
-        # delete user if not successfully deleted in last run
-        user = UserModel().get_user_by_email(user_email)
-        if user:
-            UserModel().delete_user(user.get('id'))
-        user = UserModel().get_user_by_email(updated_user_email)  # if failure happened after update
-        if user:
-            UserModel().delete_user(user.get('id'))
 
         # create user
         create_user_response = requests.request(
@@ -67,8 +60,10 @@ class TestProject(unittest.TestCase):
             })
         )
         create_user_response_body = json.loads(create_user_response.text)
+        # popping these items as they are unknown
         user_id = create_user_response_body.pop('id')
         user_created = create_user_response_body.pop('created')
+        user_updated = create_user_response_body.pop('updated')
         expected_create_user_response_body = {
             "email": user_email,
             "first_name": user_first_name,
@@ -102,7 +97,8 @@ class TestProject(unittest.TestCase):
             "email": user_email,
             "first_name": user_first_name,
             "last_name": user_last_name,
-            "created": user_created
+            "created": user_created,
+            "updated": user_updated
         }
 
         # update user
@@ -119,6 +115,7 @@ class TestProject(unittest.TestCase):
             }
         )
         update_user_response_body = json.loads(update_user_response.text)
+        # popping these items as they are unknown
         update_user_response_body.pop('updated')
         expected_update_user_response_body = {
             "id": user_id,
@@ -130,7 +127,7 @@ class TestProject(unittest.TestCase):
 
         # create event
         event_title = "Test Event"
-        event_capacity = ">9000"
+        event_capacity = "9000"
         event_description = "Live Donkey Show!"
         create_event_response = requests.request(
             url=self.base_url + '/events',
@@ -146,8 +143,10 @@ class TestProject(unittest.TestCase):
             })
         )
         create_event_response_body = json.loads(create_event_response.text)
+        # popping these items as they are unknown
         event_id = create_event_response_body.pop('id')
         event_created = create_event_response_body.pop('created')
+        event_updated = create_event_response_body.pop('updated')
         expected_create_event_response_body = {
                 "title": event_title,
                 "capacity": event_capacity,
@@ -170,7 +169,8 @@ class TestProject(unittest.TestCase):
             "capacity": event_capacity,
             "description": event_description,
             "user_id": user_id,
-            "created": event_created
+            "created": event_created,
+            "updated": event_updated
         }
 
         # update event
@@ -186,6 +186,7 @@ class TestProject(unittest.TestCase):
             }
         )
         update_event_response_body = json.loads(update_event_response.text)
+        # popping these items as they are unknown
         update_event_response_body.pop('updated')
         expected_update_event_response_body = {
             "id": event_id,
@@ -199,7 +200,7 @@ class TestProject(unittest.TestCase):
         # create ticket_type
         ticket_type_title = "Test Ticket Type"
         ticket_type_limit = "42"
-        ticket_type_price = "9001"
+        ticket_type_price = "100"
         ticket_type_description = "Front row seat"
         create_ticket_type_response = requests.request(
             url=self.base_url + '/events/{}/ticket-types'.format(event_id),
@@ -216,8 +217,10 @@ class TestProject(unittest.TestCase):
             })
         )
         create_ticket_type_response_body = json.loads(create_ticket_type_response.text)
+        # popping these items as they are unknown
         ticket_type_id = create_ticket_type_response_body.pop('id')
         ticket_type_created = create_ticket_type_response_body.pop('created')
+        ticket_type_updated = create_ticket_type_response_body.pop('updated')
         expected_create_ticket_type_response_body = {
             "title": ticket_type_title,
             "limit": ticket_type_limit,
@@ -242,7 +245,8 @@ class TestProject(unittest.TestCase):
             "description": ticket_type_description,
             "price": ticket_type_price,
             "event_id": event_id,
-            "created": ticket_type_created
+            "created": ticket_type_created,
+            "updated": ticket_type_updated
         }
 
         # update ticket type
@@ -258,6 +262,7 @@ class TestProject(unittest.TestCase):
             }
         )
         update_ticket_type_response_body = json.loads(update_ticket_type_response.text)
+        # popping these items as they are unknown
         update_ticket_type_response_body.pop('updated')
         expected_update_ticket_type_response_body = {
             "id": ticket_type_id,
@@ -267,6 +272,149 @@ class TestProject(unittest.TestCase):
             "price": ticket_type_price,
             "event_id": event_id,
             "created": ticket_type_created
+        }
+
+        # create purchase
+        ticket_quantity = "2"
+        create_purchase_response = requests.request(
+            url=self.base_url + '/purchases',
+            method='POST',
+            headers={
+                "session_id": session_id
+            },
+            data=json.dumps({
+                "user_id": user_id,
+                "items": [
+                    {
+                        "event_id": event_id,
+                        "ticket_type_id": ticket_type_id,
+                        "quantity": ticket_quantity
+                    }
+                ]
+            })
+        )
+        create_purchase_response_body = json.loads(create_purchase_response.text)
+        # popping these items as they are unknown
+        purchase_id = create_purchase_response_body.pop('id')
+        purchase_created = create_purchase_response_body.pop('created')
+        purchase_updated = create_purchase_response_body.pop('updated')
+        for item in create_purchase_response_body['purchased_items']:
+            item.pop('id')
+            item.pop('created')
+            item.pop('updated')
+        expected_create_purchase_response_body = {
+            "user_id": user_id,
+            "total": str(float(ticket_type_price) * int(ticket_quantity)),
+            "purchased_items": [
+                {
+                    "event_id": event_id,
+                    "ticket_type_id": ticket_type_id,
+                    "event_title": event_title,
+                    "event_description": event_description,
+                    "ticket_type_title": ticket_type_title,
+                    "ticket_type_description": ticket_type_description,
+                    "amount_paid": ticket_type_price
+                },
+                {
+                    "event_id": event_id,
+                    "ticket_type_id": ticket_type_id,
+                    "event_title": event_title,
+                    "event_description": event_description,
+                    "ticket_type_title": ticket_type_title,
+                    "ticket_type_description": ticket_type_description,
+                    "amount_paid": ticket_type_price
+                }
+            ],
+            "refunded_items": []
+        }
+
+        # get purchase
+        get_purchase_response = requests.request(
+            url=self.base_url + '/purchases/{}'.format(purchase_id),
+            method='GET',
+            headers={
+                "session_id": session_id
+            }
+        )
+        get_purchase_response_body = json.loads(get_purchase_response.text)
+        purchased_items = []  # to be used in refund purchase
+        # popping these items as they are unknown
+        get_purchase_response_body.pop('id')
+        for item in get_purchase_response_body['purchased_items']:
+            purchased_items.append(item.pop('id'))
+            item.pop('created')
+            item.pop('updated')
+        expected_get_purchase_response_body = {
+            "user_id": user_id,
+            "total": str(float(ticket_type_price) * int(ticket_quantity)),
+            "purchased_items": [
+                {
+                    "event_id": event_id,
+                    "ticket_type_id": ticket_type_id,
+                    "event_title": event_title,
+                    "event_description": event_description,
+                    "ticket_type_title": ticket_type_title,
+                    "ticket_type_description": ticket_type_description,
+                    "amount_paid": ticket_type_price
+                },
+                {
+                    "event_id": event_id,
+                    "ticket_type_id": ticket_type_id,
+                    "event_title": event_title,
+                    "event_description": event_description,
+                    "ticket_type_title": ticket_type_title,
+                    "ticket_type_description": ticket_type_description,
+                    "amount_paid": ticket_type_price
+                }
+            ],
+            "refunded_items": [],
+            "created": purchase_created,
+            "updated": purchase_updated
+        }
+
+        # refund purchase
+        refund_purchase_response = requests.request(
+            url=self.base_url + '/purchases/{}/refund'.format(purchase_id),
+            method='POST',
+            data=json.dumps(purchased_items),
+            headers={
+                "session_id": session_id
+            }
+        )
+        refund_purchase_response_body = json.loads(refund_purchase_response.text)
+        # popping these items as they are unknown
+        refund_purchase_response_body.pop('updated')
+        for item in refund_purchase_response_body['refunded_items']:
+            item.pop('id')
+            item.pop('created')
+            item.pop('updated')
+
+        expected_refund_purchase_response_body = {
+            "user_id": user_id,
+            "total": str(float(ticket_type_price) * int(ticket_quantity)),
+            "purchased_items": [],
+            "refunded_items": [
+                {
+                    "event_id": event_id,
+                    "ticket_type_id": ticket_type_id,
+                    "event_title": event_title,
+                    "event_description": event_description,
+                    "ticket_type_title": ticket_type_title,
+                    "ticket_type_description": ticket_type_description,
+                    "amount_paid": ticket_type_price
+                },
+                {
+                    "event_id": event_id,
+                    "ticket_type_id": ticket_type_id,
+                    "event_title": event_title,
+                    "event_description": event_description,
+                    "ticket_type_title": ticket_type_title,
+                    "ticket_type_description": ticket_type_description,
+                    "amount_paid": ticket_type_price
+                }
+            ],
+            "created": purchase_created,
+            "id": purchase_id,
         }
 
         # delete ticket type
@@ -313,6 +461,9 @@ class TestProject(unittest.TestCase):
         delete_session_response_body = json.loads(delete_session_response.text)
         expected_delete_session_response_body = {'message': 'success'}
 
+        # clean up section
+        UserModel().delete_user(user_id)
+
         # testing create user
         assert create_user_response.status_code == 200
         assert create_user_response_body == expected_create_user_response_body
@@ -354,6 +505,19 @@ class TestProject(unittest.TestCase):
         # testing update ticket type
         assert update_ticket_type_response.status_code == 200
         assert update_ticket_type_response_body == expected_update_ticket_type_response_body
+
+        # testing create purchase
+        assert create_purchase_response.status_code == 200
+        assert create_purchase_response_body == expected_create_purchase_response_body
+        assert purchase_id
+
+        # testing get purchase
+        assert get_purchase_response.status_code == 200
+        assert get_purchase_response_body == expected_get_purchase_response_body
+
+        # testing refund purchase
+        assert refund_purchase_response.status_code == 200
+        assert refund_purchase_response_body == expected_refund_purchase_response_body
 
         # testing delete ticket type
         assert delete_ticket_type_response.status_code == 200
