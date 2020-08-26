@@ -1,7 +1,7 @@
 import json
 from flask import Blueprint, Response, request
 from models.ticket_type_model import TicketTypeModel
-from security.events import is_users_event, is_events_ticket_type
+from security.events import is_users_event, is_events_ticket_type, ticket_type_has_no_tickets_sold
 from security.sessions import is_valid_session
 
 ticket_types_blueprint = Blueprint('ticket_types', __name__)
@@ -39,6 +39,7 @@ def get_ticket_type(event_id, ticket_type_id):
 
 
 @ticket_types_blueprint.route('/events/<event_id>/ticket-types/<ticket_type_id>', methods=['DELETE'])
+@ticket_type_has_no_tickets_sold
 @is_valid_session
 @is_users_event
 @is_events_ticket_type

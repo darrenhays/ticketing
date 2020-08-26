@@ -2,7 +2,7 @@ import json
 from flask import Blueprint, Response, request
 from models.event_model import EventModel
 from models.session_model import SessionModel
-from security.events import is_users_event
+from security.events import is_users_event, event_has_no_tickets_sold
 from security.sessions import is_valid_session
 
 events_blueprint = Blueprint('events', __name__)
@@ -41,6 +41,7 @@ def get_event(event_id):
 
 
 @events_blueprint.route('/events/<event_id>', methods=['DELETE'])
+@event_has_no_tickets_sold
 @is_valid_session
 @is_users_event
 def delete_event(event_id):
