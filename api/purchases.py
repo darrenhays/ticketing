@@ -64,6 +64,7 @@ def refund_items(purchase_id):
         for i, purchased_item in enumerate(updated_purchase_record['purchased_items']):
             if item_id_to_refund == purchased_item.get('id'):
                 updated_purchase_record['refunded_items'].append(updated_purchase_record['purchased_items'].pop(i))
+                TicketModel().delete_ticket(item_id_to_refund)
                 break
         else:
             return Response(json.dumps({"message": "one or more items are not available for refund"}), status=400)
