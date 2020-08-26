@@ -31,16 +31,17 @@ def create_purchase():
         grand_total += float(ticket.get('amount_paid'))
     payment_credentials = attributes.get('payment_credentials')
     payment_completed = PaymentHandler().process_payment(payment_credentials, grand_total)  # process payment here
-    if payment_completed:
-        purchase_attributes = {
-            "user_id": user_id,
-            "total": str(grand_total),
-            "purchased_items": created_tickets
-        }
-        purchase_record = PurchaseModel().create_purchase(purchase_attributes)
-        return Response(json.dumps(purchase_record), status=200)
-    else:
+    if not payment_completed:
+        for ticket in created_tickets:
+            TicketModel().delete_ticket(ticket.get('id'))
         return Response(json.dumps({'message': 'payment error'}), status=402)
+    purchase_attributes = {
+        "user_id": user_id,
+        "total": str(grand_total),
+        "purchased_items": created_tickets
+    }
+    purchase_record = PurchaseModel().create_purchase(purchase_attributes)
+    return Response(json.dumps(purchase_record), status=200)
 
 
 @purchases_blueprint.route('/purchases/<purchase_id>', methods=['GET'])
