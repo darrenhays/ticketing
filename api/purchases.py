@@ -72,9 +72,10 @@ def refund_items(purchase_id):
                 break
         else:
             return Response(json.dumps({"message": "one or more items are not available for refund"}), status=400)
-    if PaymentHandler().process_refund(refund_total):
-        purchase_record = PurchaseModel().update_purchase(purchase_id, updated_purchase_record)
-        for ticket_to_delete in refunded_ticket_ids:
-            TicketModel().delete_ticket(ticket_to_delete)
-        return Response(json.dumps(purchase_record), status=200)
+    purchase_record = PurchaseModel().update_purchase(purchase_id, updated_purchase_record)
+    if purchase_record:
+        if PaymentHandler().process_refund(refund_total):
+            for ticket_to_delete in refunded_ticket_ids:
+                TicketModel().delete_ticket(ticket_to_delete)
+            return Response(json.dumps(purchase_record), status=200)
     return Response(json.dumps({"message": "could not process refund"}), status=400)
