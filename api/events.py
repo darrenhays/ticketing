@@ -41,8 +41,8 @@ def get_event(event_id):
 
 
 @events_blueprint.route('/events/<event_id>', methods=['DELETE'])
-@event_has_no_tickets_sold
 @is_valid_session
+@event_has_no_tickets_sold
 @is_users_event
 def delete_event(event_id):
     if EventModel().delete_event(event_id):
