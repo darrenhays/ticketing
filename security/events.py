@@ -4,6 +4,7 @@ from flask import request, Response
 from functools import wraps
 from models.event_model import EventModel
 from models.session_model import SessionModel
+from models.ticket_model import TicketModel
 from models.ticket_type_model import TicketTypeModel
 
 logger = logging.getLogger()
@@ -33,4 +34,28 @@ def is_events_ticket_type(f):
             return f(*args, **kwargs)
         else:
             return Response(json.dumps({'message': 'unauthorized'}), status=403)
+    return wrapped
+
+
+def event_has_no_tickets_sold(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        event_id = kwargs.get('event_id')
+        tickets_sold = TicketModel().get_tickets_by_event(event_id)
+        if not tickets_sold:
+            return f(*args, **kwargs)
+        else:
+            return Response(json.dumps({'message': 'cannot delete events with tickets sold'}), status=403)
+    return wrapped
+
+
+def ticket_type_has_no_tickets_sold(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        ticket_type_id = kwargs.get('ticket_type_id')
+        tickets_sold = TicketModel().get_tickets_by_ticket_type(ticket_type_id)
+        if not tickets_sold:
+            return f(*args, **kwargs)
+        else:
+            return Response(json.dumps({'message': 'cannot delete ticket types with tickets sold'}), status=403)
     return wrapped

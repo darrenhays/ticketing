@@ -60,12 +60,21 @@ def refund_items(purchase_id):
     updated_purchase_record = {}
     updated_purchase_record['purchased_items'] = purchase_record.get('purchased_items', [])
     updated_purchase_record['refunded_items'] = purchase_record.get('refunded_items', [])
+    refund_total = 0.0
+    refunded_ticket_ids = []
     for item_id_to_refund in item_ids_to_refund:
         for i, purchased_item in enumerate(updated_purchase_record['purchased_items']):
             if item_id_to_refund == purchased_item.get('id'):
+                refund_total += float(purchased_item.get('amount_paid'))
                 updated_purchase_record['refunded_items'].append(updated_purchase_record['purchased_items'].pop(i))
+                refunded_ticket_ids.append(item_id_to_refund)
                 break
         else:
             return Response(json.dumps({"message": "one or more items are not available for refund"}), status=400)
     purchase_record = PurchaseModel().update_purchase(purchase_id, updated_purchase_record)
-    return Response(json.dumps(purchase_record), status=200)
+    if purchase_record:
+        if PaymentHandler().process_refund(refund_total):
+            for ticket_to_delete in refunded_ticket_ids:
+                TicketModel().delete_ticket(ticket_to_delete)
+            return Response(json.dumps(purchase_record), status=200)
+    return Response(json.dumps({"message": "could not process refund"}), status=400)
