@@ -25,13 +25,17 @@ def create_purchase():
         if TicketChecker(Ticket(requested_ticket_record)).is_oversold():
             for item in created_tickets:
                 TicketModel().delete_ticket(item.get('id'))
-            return Response(json.dumps({"message": "one or more items are no longer available"}), status=400)
+            return Response(json.dumps({"error": "one or more items are no longer available"}), status=400)
     grand_total = 0
     for ticket in created_tickets:
         grand_total += float(ticket.get('amount_paid'))
     payment_credentials = attributes.get('payment_credentials')
     payment_completed = PaymentHandler().process_payment(payment_credentials, grand_total)  # process payment here
-    if payment_completed:
+    if not payment_completed:
+        for ticket in created_tickets:
+            TicketModel().delete_ticket(ticket.get('id'))
+        return Response(json.dumps({'error': 'payment error'}), status=402)
+    else:
         purchase_attributes = {
             "user_id": user_id,
             "total": str(grand_total),
@@ -39,8 +43,6 @@ def create_purchase():
         }
         purchase_record = PurchaseModel().create_purchase(purchase_attributes)
         return Response(json.dumps(purchase_record), status=200)
-    else:
-        return Response(json.dumps({'message': 'payment error'}), status=402)
 
 
 @purchases_blueprint.route('/purchases/<purchase_id>', methods=['GET'])
@@ -70,11 +72,11 @@ def refund_items(purchase_id):
                 refunded_ticket_ids.append(item_id_to_refund)
                 break
         else:
-            return Response(json.dumps({"message": "one or more items are not available for refund"}), status=400)
+            return Response(json.dumps({"error": "one or more items are not available for refund"}), status=400)
     purchase_record = PurchaseModel().update_purchase(purchase_id, updated_purchase_record)
     if purchase_record:
         if PaymentHandler().process_refund(refund_total):
             for ticket_to_delete in refunded_ticket_ids:
                 TicketModel().delete_ticket(ticket_to_delete)
             return Response(json.dumps(purchase_record), status=200)
-    return Response(json.dumps({"message": "could not process refund"}), status=400)
+    return Response(json.dumps({"error": "could not process refund"}), status=400)

@@ -13,7 +13,7 @@ def create_user():
     try:
         user_record = UserModel().create_user(attributes)
     except Exception as e:
-        return Response(json.dumps({'message': str(e)}), status=409)
+        return Response(json.dumps({'error': str(e)}), status=409)
     user = User(user_record)
     return Response(user.jsonify(), status=200)
 
@@ -26,7 +26,7 @@ def update_user(user_id):
     try:
         user_record = UserModel().update_user(user_id, updated_attributes)
     except Exception as e:
-        return Response(json.dumps({'message': str(e)}), status=409)
+        return Response(json.dumps({'error': str(e)}), status=409)
     user = User(user_record)
     return Response(user.jsonify(), status=200)
 
@@ -47,4 +47,4 @@ def delete_user(user_id):
     if UserModel().delete_user(user_id):
         return Response(json.dumps({'message': 'success'}), status=200)
     else:
-        return Response(json.dumps({'message': 'failure'}), status=409)
+        return Response(json.dumps({'error': 'failure'}), status=409)

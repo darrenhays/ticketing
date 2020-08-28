@@ -15,7 +15,7 @@ def create_ticket_type(event_id):
     try:
         ticket_type_record = TicketTypeModel().create_ticket_type(attributes)
     except Exception as e:
-        return Response(json.dumps({'message': str(e)}), status=409)
+        return Response(json.dumps({'error': str(e)}), status=409)
     return Response(json.dumps(ticket_type_record), status=200)
 
 
@@ -28,7 +28,7 @@ def update_ticket_type(event_id, ticket_type_id):
     try:
         ticket_type_record = TicketTypeModel().update_ticket_type(ticket_type_id, updated_attributes)
     except Exception as e:
-        return Response(json.dumps({'message': str(e)}), status=409)
+        return Response(json.dumps({'error': str(e)}), status=409)
     return Response(json.dumps(ticket_type_record), status=200)
 
 
@@ -47,4 +47,4 @@ def delete_ticket_type(event_id, ticket_type_id):
     if TicketTypeModel().delete_ticket_type(ticket_type_id):
         return Response(json.dumps({'message': 'success'}), status=200)
     else:
-        return Response(json.dumps({'message': 'failure'}), status=409)
+        return Response(json.dumps({'error': 'failure'}), status=409)
