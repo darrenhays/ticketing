@@ -18,7 +18,7 @@ def create_event():
     try:
         event_record = EventModel().create_event(attributes)
     except Exception as e:
-        return Response(json.dumps({'message': str(e)}), status=409)
+        return Response(json.dumps({'error': str(e)}), status=409)
     return Response(json.dumps(event_record), status=200)
 
 
@@ -30,7 +30,7 @@ def update_event(event_id):
     try:
         event_record = EventModel().update_event(event_id, updated_attributes)
     except Exception as e:
-        return Response(json.dumps({'message': str(e)}), status=409)
+        return Response(json.dumps({'error': str(e)}), status=409)
     return Response(json.dumps(event_record), status=200)
 
 
@@ -48,4 +48,4 @@ def delete_event(event_id):
     if EventModel().delete_event(event_id):
         return Response(json.dumps({'message': 'success'}), status=200)
     else:
-        return Response(json.dumps({'message': 'failure'}), status=409)
+        return Response(json.dumps({'error': 'failure'}), status=409)

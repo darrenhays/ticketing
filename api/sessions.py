@@ -17,7 +17,7 @@ def create_session():
         session_record = SessionModel().create_session(user_record.get('id'))
         return Response(json.dumps({'session_id': session_record.get('id')}), status=200)
     else:
-        return Response(json.dumps({'message': 'invalid credentials'}), status=403)
+        return Response(json.dumps({'error': 'invalid credentials'}), status=403)
 
 
 @sessions_blueprint.route('/sessions/<session_id>', methods=['DELETE'])
