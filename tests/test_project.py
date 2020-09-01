@@ -17,7 +17,7 @@ class TestProject(unittest.TestCase):
         user_password = 'testpassword'
         user_first_name = "First"
         user_last_name = "Last"
-        
+
         mock_get_user_by_email.return_value = {}
         mock_insert.return_value = {
             'id': user_id,
@@ -82,7 +82,7 @@ class TestProject(unittest.TestCase):
         )
         create_session_response_body = json.loads(create_session_response.text)
         session_id = create_session_response_body.get('session_id')
-        
+
         # get user
         get_user_response = requests.request(
             url=self.base_url + '/users/{}'.format(user_id),
