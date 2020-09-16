@@ -519,6 +519,7 @@ class TestProject(unittest.TestCase):
         # testing get purchase
         assert get_purchase_response.status_code == 200
         assert get_purchase_response_body == expected_get_purchase_response_body
+        assert payment_id
 
         # testing refund purchase
         assert refund_purchase_response.status_code == 200
