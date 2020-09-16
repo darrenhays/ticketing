@@ -29,8 +29,8 @@ def create_purchase():
     grand_total = 0
     for ticket in created_tickets:
         grand_total += float(ticket.get('amount_paid'))
-    payment_credentials = attributes.get('payment_credentials')
-    payment_completed = PaymentHandler().process_payment(payment_credentials, grand_total)  # process payment here
+    payment_token = attributes.get('payment_token')
+    payment_completed = PaymentHandler().process_payment(payment_token, grand_total)
     if not payment_completed:
         for ticket in created_tickets:
             TicketModel().delete_ticket(ticket.get('id'))
@@ -39,7 +39,8 @@ def create_purchase():
         purchase_attributes = {
             "user_id": user_id,
             "total": str(grand_total),
-            "purchased_items": created_tickets
+            "purchased_items": created_tickets,
+            "payment_id": payment_completed.get('id')
         }
         purchase_record = PurchaseModel().create_purchase(purchase_attributes)
         return Response(json.dumps(purchase_record), status=200)
@@ -75,7 +76,8 @@ def refund_items(purchase_id):
             return Response(json.dumps({"error": "one or more items are not available for refund"}), status=400)
     purchase_record = PurchaseModel().update_purchase(purchase_id, updated_purchase_record)
     if purchase_record:
-        if PaymentHandler().process_refund(refund_total):
+        payment_id = purchase_record.get('payment_id')
+        if PaymentHandler().process_refund(payment_id, refund_total):
             for ticket_to_delete in refunded_ticket_ids:
                 TicketModel().delete_ticket(ticket_to_delete)
             return Response(json.dumps(purchase_record), status=200)

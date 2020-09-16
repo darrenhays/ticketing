@@ -7,7 +7,8 @@ class PurchaseModel(AbstractModel):
     required_attributes = [
         'purchased_items',
         'refunded_items',
-        'total'
+        'total',
+        'payment_id'
     ]
     optional_attributes = [
         'user_id'
