@@ -1,12 +1,20 @@
+import logging
 from models.event_model import EventModel
 from models.ticket_model import TicketModel
 from models.ticket_type_model import TicketTypeModel
+
+logger = logging.getLogger()
 
 
 class TicketProcessor:
     def process_record(self, ticket_record):
         created_tickets = []
-        ticket_quantity = int(ticket_record.pop('quantity'))
+        try:
+            ticket_quantity = int(ticket_record.pop('quantity'))
+        except KeyError as e:
+            logger.error("###### TicketProcessor: failure")
+            logger.error(e)
+            return created_tickets
         event_record = EventModel().get_event(ticket_record.get('event_id'))
         ticket_record['event_title'] = event_record.get('title')
         ticket_record['event_description'] = event_record.get('description')
