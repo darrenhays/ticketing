@@ -275,6 +275,7 @@ class TestProject(unittest.TestCase):
         }
 
         # create purchase
+        payment_token = "tok_visa"
         ticket_quantity = "2"
         create_purchase_response = requests.request(
             url=self.base_url + '/purchases',
@@ -284,6 +285,7 @@ class TestProject(unittest.TestCase):
             },
             data=json.dumps({
                 "user_id": user_id,
+                "payment_token": payment_token,
                 "items": [
                     {
                         "event_id": event_id,
@@ -298,6 +300,7 @@ class TestProject(unittest.TestCase):
         purchase_id = create_purchase_response_body.pop('id')
         purchase_created = create_purchase_response_body.pop('created')
         purchase_updated = create_purchase_response_body.pop('updated')
+        payment_id = create_purchase_response_body.pop('payment_id')
         for item in create_purchase_response_body['purchased_items']:
             item.pop('id')
             item.pop('created')
@@ -347,6 +350,7 @@ class TestProject(unittest.TestCase):
         expected_get_purchase_response_body = {
             "user_id": user_id,
             "total": str(float(ticket_type_price) * int(ticket_quantity)),
+            "payment_id": payment_id,
             "purchased_items": [
                 {
                     "event_id": event_id,
@@ -392,6 +396,7 @@ class TestProject(unittest.TestCase):
         expected_refund_purchase_response_body = {
             "user_id": user_id,
             "total": str(float(ticket_type_price) * int(ticket_quantity)),
+            "payment_id": payment_id,
             "purchased_items": [],
             "refunded_items": [
                 {
@@ -514,6 +519,7 @@ class TestProject(unittest.TestCase):
         # testing get purchase
         assert get_purchase_response.status_code == 200
         assert get_purchase_response_body == expected_get_purchase_response_body
+        assert payment_id
 
         # testing refund purchase
         assert refund_purchase_response.status_code == 200
