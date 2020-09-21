@@ -13,7 +13,8 @@ class EventModel(AbstractModel):
         'capacity'
     ]
     optional_attributes = [
-        'description'
+        'description',
+        'cancelled'
     ]
 
     def create_event(self, attributes={}):

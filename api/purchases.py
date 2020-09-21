@@ -82,3 +82,4 @@ def refund_items(purchase_id):
                 TicketModel().delete_ticket(ticket_to_delete)
             return Response(json.dumps(purchase_record), status=200)
     return Response(json.dumps({"error": "could not process refund"}), status=400)
+
