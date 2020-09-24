@@ -18,6 +18,10 @@ class TicketModel(AbstractModel):
         'amount_paid'
     ]
 
+    optional_attributes = [
+        'purchase_id'
+    ]
+
     def create_ticket(self, attributes):
         return self.insert(attributes)
 

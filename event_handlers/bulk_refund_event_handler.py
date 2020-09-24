@@ -11,7 +11,7 @@ def event_handler(event, context):
     if message_type == 'event':
         event_id = body['id']
         process_attributes = {
-            "process_type": "event",
+            "process_type": message_type,
             "event_id": event_id,
             "status": "processing"
         }
