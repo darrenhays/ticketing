@@ -5,6 +5,7 @@ from secrets.secrets import get_secret
 BASE_URL = 'https://0dny54d3nf.execute-api.us-east-2.amazonaws.com/staging'
 LAMBDA_URL = BASE_URL
 EVENTS_TABLE_NAME = 'events_staging'
+PROCESS_TABLE_NAME = 'processes_staging'
 PURCHASES_TABLE_NAME = 'purchases_staging'
 SALT = get_secret('SECRETS').get('staging_salt')
 SESSIONS_TABLE_NAME = 'sessions_staging'

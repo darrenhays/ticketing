@@ -12,6 +12,28 @@
             "environment": "staging"
         }
     },
+    "staging_bulk_refund_queue_event_handler": {
+        "s3_bucket": "zappa-ticketing",
+        "timeout_seconds": 30,
+        "debug": true,
+        "log_level": "DEBUG",
+        "manage_roles": false,
+        "role_arn": "arn:aws:iam::531085525366:role/service-role/bulk_refund-role-tsryqzh4",
+        "environment_variables": {
+            "deployment": "staging"
+        },
+        "apigateway_enabled": false,
+        "events": [
+           {
+               "function": "event_handlers.bulk_refund_event_handler.event_handler",
+               "event_source": {
+                    "arn":  "arn:aws:sqs:us-east-2:531085525366:bulk_refund",
+                    "batch_size": 10,
+                    "enabled": true
+               }
+           }
+       ]
+    },
     "production": {
         "app_function": "app.app",
         "aws_region": "us-east-2",
