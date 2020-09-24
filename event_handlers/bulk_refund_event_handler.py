@@ -2,6 +2,7 @@ import json
 from models.process_model import ProcessModel
 from models.ticket_model import TicketModel
 from objects.queue import Queue
+from objects.refund_processor import RefundProcessor, ItemsNotAvailable, ProcessingFailure
 
 
 def event_handler(event, context):
@@ -34,11 +35,41 @@ def event_handler(event, context):
         Queue().send_message(message)
         ProcessModel().update_process(process_record.get('id'), {"status": "completed"})
 
-        # # Delete received message from queue
-        # receipt_handle = event['Records'][0]['receiptHandle']
-        # Queue().delete_message(receipt_handle)
     elif message_type == 'ticket':
-        ProcessModel().create_process({"test": "TICKET", "event_id": "123"})
+        ticket_id = body['id']
+        ticket_record = TicketModel().get_ticket(ticket_id)
+        event_id = ticket_record.get('event_id')
+        process_attributes = {
+            "process_type": message_type,
+            "ticket_id": ticket_id,
+            "event_id": event_id,
+            "status": "processing"
+        }
+        process_record = ProcessModel().create_process(process_attributes)
+
+        # refund ticket
+        purchase_id = ticket_record.get('purchase_id')
+        try:
+            RefundProcessor().process_refund(purchase_id, [ticket_id])  # process refund takes a list of ticket ids
+        except ItemsNotAvailable as e:
+            updated_process_attributes = {"status": "failed", "error": e}
+            ProcessModel().update_process(process_record.get('id'), updated_process_attributes)
+            return
+        except ProcessingFailure as e:
+            updated_process_attributes = {"status": "failed", "error": e}
+            ProcessModel().update_process(process_record.get('id'), updated_process_attributes)
+            return
+
+        # delete ticket
+        try:
+            TicketModel().delete_ticket(ticket_id)
+        except:
+            updated_process_attributes = {"status": "failed", "error": "deleteError"}
+            ProcessModel().update_process(process_record.get('id'), updated_process_attributes)
+            return
+
+        # update process
+        ProcessModel().update_process(process_record.get('id'), {"status": "completed"})
     else:
         # process checker
         ProcessModel().create_process({"test": "CHECKER", "event_id": "123"})
