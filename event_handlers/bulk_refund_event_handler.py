@@ -34,7 +34,6 @@ def event_handler(event, context):
         }
         Queue().send_message(message)
         ProcessModel().update_process(process_record.get('id'), {"status": "completed"})
-
     elif message_type == 'ticket':
         ticket_id = body['id']
         ticket_record = TicketModel().get_ticket(ticket_id)
@@ -71,9 +70,24 @@ def event_handler(event, context):
         # update process
         ProcessModel().update_process(process_record.get('id'), {"status": "completed"})
     else:
-        # process checker
-        ProcessModel().create_process({"test": "CHECKER", "event_id": "123"})
-        pass
+        event_id = body['id']
+        processes = ProcessModel().get_processes_by_event(event_id)
+        for process in processes:
+            if process.get('status') == 'processing':
+                message = {
+                    "message_type": "checker",
+                    "id": event_id
+                }
+                Queue().send_message(message)
+                break
+        else:
+            process_attributes = {
+                "process_type": message_type,
+                "event_id": event_id,
+                "status": "completed"
+            }
+            ProcessModel().create_process(process_attributes)
+            #FIXME send email
 
     return {
         'statusCode': 200,
