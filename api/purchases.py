@@ -4,7 +4,7 @@ from flask import Blueprint, Response, request
 from models.purchase_model import PurchaseModel
 from models.ticket_model import TicketModel
 from objects.payment_handler import PaymentHandler
-from objects.refund_processor import RefundProcessor
+from objects.refund_processor import RefundProcessor, ItemsNotAvailable, ProcessingFailure
 from objects.ticket import Ticket
 from objects.ticket_checker import TicketChecker
 from objects.ticket_processor import TicketProcessor
@@ -63,9 +63,12 @@ def get_purchase(purchase_id):
 @is_users_purchase
 def refund_items(purchase_id):
     item_ids = json.loads(request.data)
-    response = RefundProcessor().process_refund(purchase_id, item_ids)
-    if response.get('error'):
-        return Response(json.dumps(response), status=400)
-    return Response(json.dumps(response), status=200)
+    try:
+        response = RefundProcessor().process_refund(purchase_id, item_ids)
+        return Response(json.dumps(response), status=200)
+    except ItemsNotAvailable as e:
+        return Response(json.dumps({'error': e}), status=400)
+    except ProcessingFailure as e:
+        return Response(json.dumps({'error': e}), status=400)
 
 
