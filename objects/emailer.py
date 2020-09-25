@@ -1,6 +1,7 @@
 import boto3
 import logging
 from botocore.exceptions import ClientError
+from settings import SYSTEM_NAME, SYSTEM_EMAIL
 
 logger = logging.getLogger()
 
@@ -8,7 +9,7 @@ logger = logging.getLogger()
 class Emailer:
     def __init__(self):
         self.client = boto3.client('ses')
-        self.sender = "Darren Hays <darrenhaysdesign@gmail.com>"
+        self.sender = "{} <{}>".format(SYSTEM_NAME, SYSTEM_EMAIL)
         self.charset = "UTF-8"
 
     def send_email(self, recipient, subject, body_text):
