@@ -21,12 +21,12 @@ class ProcessModel(AbstractModel):
     def update_process(self, process_id, updated_attributes):
         return self.update(process_id, updated_attributes)
 
-    def get_processes_by_event(self, event_id):
-        logger.info("########## {} get_processes_by_event ##########".format(self.__class__.__name__))
-        logger.info("event_id: {}".format(event_id))
-        key = Key('event_id').eq(event_id)
+    def get_processes_by_parent_process(self, parent_process_id):
+        logger.info("########## {} get_processes_by_parent_process ##########".format(self.__class__.__name__))
+        logger.info("parent_process_id: {}".format(parent_process_id))
+        key = Key('parent_process_id').eq(parent_process_id)
         try:
-            response = self.table.query(IndexName='event_id_index', KeyConditionExpression=key)
+            response = self.table.query(IndexName='parent_process_id_index', KeyConditionExpression=key)
             return response.get('Items')
         except Exception as e:
             logger.error(e)

@@ -50,7 +50,6 @@ class Emailer:
                 Message=message,
                 Source=self.sender
             )
-        # Display an error if something goes wrong.
         except ClientError as e:
             logger.error("###### {}.send_email: failure".format(self.__class__.__name__))
             logger.error(e.response['Error']['Message'])
