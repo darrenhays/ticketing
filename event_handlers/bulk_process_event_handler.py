@@ -96,13 +96,12 @@ def process_refund_ticket_message(message):
     # delete ticket
     try:
         TicketModel().delete_ticket(ticket_id)
+        updated_process_attributes = {"status": "completed"}
     except:
         updated_process_attributes = {"status": "failed", "error": "deleteError"}
-        ProcessModel().update_process(process_id, updated_process_attributes)
-        return
 
     # update process
-    ProcessModel().update_process(process_id, {"status": "completed"})
+    ProcessModel().update_process(process_id, updated_process_attributes)
 
 
 def send_process_report(message, failed_processes):

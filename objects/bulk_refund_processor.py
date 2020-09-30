@@ -7,7 +7,6 @@ class BulkRefundProcessor:
         process_attributes = {
             "process_type": "refund_event",
             "event_id": event_id,
-            "parent_process_id": "None",
             "status": "processing"
         }
         process_record = ProcessModel().create_process(process_attributes)
