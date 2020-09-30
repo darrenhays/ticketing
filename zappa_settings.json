@@ -12,7 +12,7 @@
             "environment": "staging"
         }
     },
-    "staging_bulk_refund_queue_event_handler": {
+    "staging_bulk_process_event_handler": {
         "s3_bucket": "zappa-ticketing",
         "timeout_seconds": 30,
         "debug": true,
@@ -23,9 +23,10 @@
             "deployment": "staging"
         },
         "apigateway_enabled": false,
+        "lambda_concurrency": 1,
         "events": [
            {
-               "function": "event_handlers.bulk_refund_event_handler.event_handler",
+               "function": "event_handlers.bulk_process_event_handler.event_handler",
                "event_source": {
                     "arn":  "arn:aws:sqs:us-east-2:531085525366:bulk_refund",
                     "batch_size": 10,
