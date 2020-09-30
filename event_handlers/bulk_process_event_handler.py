@@ -8,6 +8,9 @@ from objects.queue import Queue
 from objects.refund_processor import RefundProcessor, ItemsNotAvailable, ProcessingFailure
 from settings import SYSTEM_EMAIL
 
+logging.basicConfig()
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 logger = logging.getLogger()
 
 
