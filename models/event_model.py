@@ -1,8 +1,5 @@
-import logging
 from models.abstract_model import AbstractModel
 from settings import EVENTS_TABLE_NAME
-
-logger = logging.getLogger()
 
 
 class EventModel(AbstractModel):
@@ -13,7 +10,8 @@ class EventModel(AbstractModel):
         'capacity'
     ]
     optional_attributes = [
-        'description'
+        'description',
+        'cancelled'
     ]
 
     def create_event(self, attributes={}):

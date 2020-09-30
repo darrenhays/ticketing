@@ -2,6 +2,7 @@ import json
 from flask import Blueprint, Response, request
 from models.event_model import EventModel
 from models.session_model import SessionModel
+from objects.bulk_refund_processor import BulkRefundProcessor
 from security.events import is_users_event, event_has_no_tickets_sold
 from security.sessions import is_valid_session
 
@@ -42,10 +43,6 @@ def get_event(event_id):
 
 @events_blueprint.route('/events/<event_id>', methods=['DELETE'])
 @is_valid_session
-@event_has_no_tickets_sold
 @is_users_event
-def delete_event(event_id):
-    if EventModel().delete_event(event_id):
-        return Response(json.dumps({'message': 'success'}), status=200)
-    else:
-        return Response(json.dumps({'error': 'failure'}), status=409)
+def cancel_event(event_id):
+    return BulkRefundProcessor().process_bulk_refund(event_id)
