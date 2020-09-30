@@ -1,6 +1,7 @@
 import json
 import logging
 from api.events import events_blueprint
+from api.processes import processes_blueprint
 from api.purchases import purchases_blueprint
 from api.sessions import sessions_blueprint
 from api.ticket_types import ticket_types_blueprint
@@ -13,6 +14,7 @@ logger.setLevel(logging.INFO)
 
 app = Flask(__name__)
 app.register_blueprint(events_blueprint)
+app.register_blueprint(processes_blueprint)
 app.register_blueprint(purchases_blueprint)
 app.register_blueprint(sessions_blueprint)
 app.register_blueprint(ticket_types_blueprint)
