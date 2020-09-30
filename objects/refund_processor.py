@@ -1,10 +1,26 @@
+import logging
 from models.purchase_model import PurchaseModel
 from models.ticket_model import TicketModel
 from objects.payment_handler import PaymentHandler
 
+logger = logging.getLogger()
+
+
+class ItemsNotAvailable(Exception):
+    """raised when an item is not found in purchased items"""
+    pass
+
+
+class ProcessingFailure(Exception):
+    """raised when a purchase is not created"""
+    pass
+
 
 class RefundProcessor:
     def process_refund(self, purchase_id, item_ids):
+        logger.info("########## {} process_refund ##########".format(self.__class__.__name__))
+        logger.info("purchase_id: {}".format(purchase_id))
+        logger.info("item_ids: {}".format(item_ids))
         purchase_record = PurchaseModel().get_purchase(purchase_id)
         updated_purchase_record = {}
         updated_purchase_record['purchased_items'] = purchase_record.get('purchased_items', [])
@@ -19,7 +35,9 @@ class RefundProcessor:
                     refunded_ticket_ids.append(item_id)
                     break
             else:
-                return {"error": "one or more items are not available for refund"}
+                logger.error("###### RefundProcessor: failure")
+                logger.error('ItemsNotAvailable')
+                raise ItemsNotAvailable("one or more items are not available for refund")
         purchase_record = PurchaseModel().update_purchase(purchase_id, updated_purchase_record)
         if purchase_record:
             payment_id = purchase_record.get('payment_id')
@@ -27,4 +45,6 @@ class RefundProcessor:
                 for ticket_to_delete in refunded_ticket_ids:
                     TicketModel().delete_ticket(ticket_to_delete)
                 return purchase_record
-        return {"error": "could not process refund"}
+        logger.error("###### RefundProcessor: failure")
+        logger.error('ProcessingFailure')
+        raise ProcessingFailure("could not process refund")
