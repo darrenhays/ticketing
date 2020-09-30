@@ -46,4 +46,5 @@ def get_event(event_id):
 @is_users_event
 def cancel_event(event_id):
     user_id = EventModel().get_event(event_id).get('user_id')
-    return BulkRefundProcessor().process_bulk_refund(user_id, event_id)
+    process_record = BulkRefundProcessor().process_bulk_refund(user_id, event_id)
+    return Response(json.dumps(process_record), status=200)

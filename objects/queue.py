@@ -19,8 +19,8 @@ class Queue:
             MaxNumberOfMessages=1
         )
 
-    def delete_message(self, receipt_handle):
+    def delete_message(self, message_id):
         return self.client.delete_message(
             QueueUrl=QUEUE_URL,
-            ReceiptHandle=receipt_handle
+            ReceiptHandle=message_id
         )
