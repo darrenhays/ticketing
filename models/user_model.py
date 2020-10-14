@@ -15,8 +15,7 @@ class UserModel(AbstractModel):
     table_name = USERS_TABLE_NAME
     required_attributes = [
         'email',
-        'password',
-        'status'
+        'password'
     ]
     optional_attributes = [
         'first_name',

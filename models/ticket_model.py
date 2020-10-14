@@ -15,8 +15,7 @@ class TicketModel(AbstractModel):
         'ticket_type_id',
         'ticket_type_title',
         'ticket_type_description',
-        'amount_paid',
-        'status'
+        'amount_paid'
     ]
 
     optional_attributes = [
@@ -41,7 +40,11 @@ class TicketModel(AbstractModel):
         key = Key('event_id').eq(event_id)
         try:
             response = self.table.query(IndexName='event_id_index', KeyConditionExpression=key)
-            return response.get('Items')
+            tickets = response.get('Items')
+            for ticket in tickets:
+                if ticket.get('status') == 'deactive':
+                    tickets.remove(ticket)
+            return tickets
         except Exception as e:
             logger.error(e)
             return []
@@ -52,7 +55,11 @@ class TicketModel(AbstractModel):
         key = Key('ticket_type_id').eq(ticket_type_id)
         try:
             response = self.table.query(IndexName='ticket_type_id_index', KeyConditionExpression=key)
-            return response.get('Items')
+            tickets = response.get('Items')
+            for ticket in tickets:
+                if ticket.get('status') == 'deactive':
+                    tickets.remove(ticket)
+            return tickets
         except Exception as e:
             logger.error(e)
             return []

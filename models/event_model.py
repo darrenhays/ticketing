@@ -7,8 +7,7 @@ class EventModel(AbstractModel):
     required_attributes = [
         'title',
         'user_id',
-        'capacity',
-        'status'
+        'capacity'
     ]
     optional_attributes = [
         'description'

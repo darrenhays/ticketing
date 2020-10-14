@@ -8,8 +8,7 @@ class TicketTypeModel(AbstractModel):
         'title',
         'event_id',
         'limit',
-        'price',
-        'status'
+        'price'
     ]
     optional_attributes = [
         'description'
