@@ -7,11 +7,11 @@ class EventModel(AbstractModel):
     required_attributes = [
         'title',
         'user_id',
-        'capacity'
+        'capacity',
+        'status'
     ]
     optional_attributes = [
-        'description',
-        'cancelled'
+        'description'
     ]
 
     def create_event(self, attributes={}):

@@ -32,6 +32,7 @@ class AbstractModel:
             raise InvalidAttributeError('only the following attributes are allowed: ' + ', '.join(self.required_attributes + self.optional_attributes))
         item['id'] = str(uuid.uuid4())
         item['created'] = item['updated'] = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        item['status'] = 'active'
         try:
             self.table.put_item(Item=item)
         except Exception as e:
@@ -66,6 +67,11 @@ class AbstractModel:
 
     def delete(self, id):
         logger.info("########## {} delete ##########".format(self.__class__.__name__))
+        logger.info("id: {}".format(id))
+        self.update(id, {'status': "inactive"})
+
+    def remove(self, id):
+        logger.info("########## {} remove ##########".format(self.__class__.__name__))
         logger.info("id: {}".format(id))
         try:
             self.table.delete_item(Key={'id': id})

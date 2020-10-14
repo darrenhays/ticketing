@@ -15,7 +15,8 @@ class TicketModel(AbstractModel):
         'ticket_type_id',
         'ticket_type_title',
         'ticket_type_description',
-        'amount_paid'
+        'amount_paid',
+        'status'
     ]
 
     optional_attributes = [

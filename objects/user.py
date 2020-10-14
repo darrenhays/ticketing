@@ -8,5 +8,8 @@ class User(AbstractModelObject):
         'id',
         'email',
         'first_name',
-        'last_name'
+        'last_name',
+        'created',
+        'updated',
+        'deleted'
     ] + sensitive_attributes

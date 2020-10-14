@@ -10,5 +10,8 @@ class Ticket(AbstractModelObject):
         'ticket_type_id',
         'ticket_type_title',
         'ticket_type_description',
-        'amount_paid'
+        'amount_paid',
+        'created',
+        'updated',
+        'deleted'
     ]

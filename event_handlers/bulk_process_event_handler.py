@@ -1,5 +1,6 @@
 import json
 import logging
+from models.event_model import EventModel
 from models.process_model import ProcessModel
 from models.ticket_model import TicketModel
 from models.user_model import UserModel
@@ -39,6 +40,8 @@ def process_refund_event_message(message):
 
     event_id = message['body']['event_id']
     process_id = message['body']['process_id']
+
+    EventModel().delete_event(event_id)
 
     tickets = TicketModel().get_tickets_by_event(event_id)
     for ticket in tickets:
