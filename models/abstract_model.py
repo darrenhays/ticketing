@@ -32,7 +32,8 @@ class AbstractModel:
             raise InvalidAttributeError('only the following attributes are allowed: ' + ', '.join(self.required_attributes + self.optional_attributes))
         item['id'] = str(uuid.uuid4())
         item['created'] = item['updated'] = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-        item['status'] = 'active'
+        if not item.get('status'):
+            item['status'] = 'active'
         try:
             self.table.put_item(Item=item)
         except Exception as e:

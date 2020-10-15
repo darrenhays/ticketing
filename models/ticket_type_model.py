@@ -11,7 +11,8 @@ class TicketTypeModel(AbstractModel):
         'price'
     ]
     optional_attributes = [
-        'description'
+        'description',
+        'status'
     ]
 
     def create_ticket_type(self, attributes):

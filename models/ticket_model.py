@@ -19,7 +19,8 @@ class TicketModel(AbstractModel):
     ]
 
     optional_attributes = [
-        'purchase_id'
+        'purchase_id',
+        'status'
     ]
 
     def create_ticket(self, attributes):
@@ -42,7 +43,7 @@ class TicketModel(AbstractModel):
             response = self.table.query(IndexName='event_id_index', KeyConditionExpression=key)
             tickets = response.get('Items')
             for ticket in tickets:
-                if ticket.get('status') == 'deactive':
+                if ticket.get('status') != 'active':
                     tickets.remove(ticket)
             return tickets
         except Exception as e:
@@ -57,7 +58,7 @@ class TicketModel(AbstractModel):
             response = self.table.query(IndexName='ticket_type_id_index', KeyConditionExpression=key)
             tickets = response.get('Items')
             for ticket in tickets:
-                if ticket.get('status') == 'deactive':
+                if ticket.get('status') != 'active':
                     tickets.remove(ticket)
             return tickets
         except Exception as e:
