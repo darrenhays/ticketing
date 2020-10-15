@@ -42,7 +42,6 @@ def event_has_no_tickets_sold(f):
     def wrapped(*args, **kwargs):
         event_id = kwargs.get('event_id')
         tickets_sold = TicketModel().get_tickets_by_event(event_id)
-        tickets_sold = remove_inactive_tickets(tickets_sold)
         if not tickets_sold:
             return f(*args, **kwargs)
         else:
@@ -55,16 +54,8 @@ def ticket_type_has_no_tickets_sold(f):
     def wrapped(*args, **kwargs):
         ticket_type_id = kwargs.get('ticket_type_id')
         tickets_sold = TicketModel().get_tickets_by_ticket_type(ticket_type_id)
-        tickets_sold = remove_inactive_tickets(tickets_sold)
         if not tickets_sold:
             return f(*args, **kwargs)
         else:
             return Response(json.dumps({'message': 'cannot delete ticket types with tickets sold'}), status=403)
     return wrapped
-
-
-def remove_inactive_tickets(tickets_sold):
-    for ticket_sold in tickets_sold:
-        if ticket_sold.get('status') != 'active':
-            tickets_sold.remove(ticket_sold)
-    return tickets_sold

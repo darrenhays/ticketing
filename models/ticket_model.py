@@ -42,9 +42,7 @@ class TicketModel(AbstractModel):
         try:
             response = self.table.query(IndexName='event_id_index', KeyConditionExpression=key)
             tickets = response.get('Items')
-            for ticket in tickets:
-                if ticket.get('status') != 'active':
-                    tickets.remove(ticket)
+            tickets = self.remove_inactive_tickets(tickets)
             return tickets
         except Exception as e:
             logger.error(e)
@@ -57,10 +55,15 @@ class TicketModel(AbstractModel):
         try:
             response = self.table.query(IndexName='ticket_type_id_index', KeyConditionExpression=key)
             tickets = response.get('Items')
-            for ticket in tickets:
-                if ticket.get('status') != 'active':
-                    tickets.remove(ticket)
+            tickets = self.remove_inactive_tickets(tickets)
             return tickets
         except Exception as e:
             logger.error(e)
             return []
+
+
+    def remove_inactive_tickets(self, tickets):
+        for ticket in tickets:
+            if ticket.get('status') != 'active':
+                tickets.remove(ticket)
+        return tickets
