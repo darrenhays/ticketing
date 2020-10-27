@@ -41,9 +41,9 @@ class TicketModel(AbstractModel):
         key = Key('event_id').eq(event_id)
         try:
             response = self.table.query(IndexName='event_id_index', KeyConditionExpression=key)
-            tickets = response.get('Items')
-            tickets = self.remove_inactive_tickets(tickets)
-            return tickets
+            all_tickets = response.get('Items')
+            active_tickets = self.remove_inactive_tickets(all_tickets)
+            return active_tickets
         except Exception as e:
             logger.error(e)
             return []
@@ -54,9 +54,9 @@ class TicketModel(AbstractModel):
         key = Key('ticket_type_id').eq(ticket_type_id)
         try:
             response = self.table.query(IndexName='ticket_type_id_index', KeyConditionExpression=key)
-            tickets = response.get('Items')
-            tickets = self.remove_inactive_tickets(tickets)
-            return tickets
+            all_tickets = response.get('Items')
+            active_tickets = self.remove_inactive_tickets(all_tickets)
+            return active_tickets
         except Exception as e:
             logger.error(e)
             return []

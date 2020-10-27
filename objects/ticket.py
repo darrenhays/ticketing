@@ -13,5 +13,5 @@ class Ticket(AbstractModelObject):
         'amount_paid',
         'created',
         'updated',
-        'deleted'
+        'status'
     ]

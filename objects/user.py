@@ -11,5 +11,5 @@ class User(AbstractModelObject):
         'last_name',
         'created',
         'updated',
-        'deleted'
+        'status'
     ] + sensitive_attributes
