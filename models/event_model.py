@@ -11,7 +11,7 @@ class EventModel(AbstractModel):
     ]
     optional_attributes = [
         'description',
-        'cancelled'
+        'status'
     ]
 
     def create_event(self, attributes={}):
