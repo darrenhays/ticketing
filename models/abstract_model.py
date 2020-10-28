@@ -18,6 +18,13 @@ class AbstractModel:
     table_name = None
     required_attributes = []
     optional_attributes = []
+    __optional_attributes = [
+        'status'
+    ]
+    __protected_attributes = [
+        'created',
+        'updated'
+    ]
 
     def __init__(self):
         database = boto3.resource('dynamodb')
@@ -91,6 +98,6 @@ class AbstractModel:
         if not self.required_attributes and not self.optional_attributes:
             return True
         for key in attributes.keys():
-            if key not in self.required_attributes + self.optional_attributes:
+            if key not in self.required_attributes + self.optional_attributes + self.__optional_attributes:
                 return False
         return True

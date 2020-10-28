@@ -11,8 +11,7 @@ class PurchaseModel(AbstractModel):
         'payment_id'
     ]
     optional_attributes = [
-        'user_id',
-        'status'
+        'user_id'
     ]
 
     def create_purchase(self, attributes):

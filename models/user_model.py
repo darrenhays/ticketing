@@ -20,7 +20,6 @@ class UserModel(AbstractModel):
     optional_attributes = [
         'first_name',
         'last_name',
-        'status'
     ]
 
     def create_user(self, attributes={}):
