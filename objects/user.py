@@ -5,11 +5,7 @@ class User(AbstractModelObject):
     __attributes = {}
     sensitive_attributes = ['password']
     allowed_attributes = [
-        'id',
         'email',
         'first_name',
-        'last_name',
-        'created',
-        'updated',
-        'status'
+        'last_name'
     ] + sensitive_attributes

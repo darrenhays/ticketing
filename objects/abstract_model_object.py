@@ -6,6 +6,12 @@ logger = logging.getLogger()
 
 class AbstractModelObject:
     __attributes = {}
+    __allowed_attributes = [
+        'id',
+        'created',
+        'updated',
+        'status'
+    ]
     sensitive_attributes = []
     allowed_attributes = [] + sensitive_attributes
 
@@ -24,7 +30,7 @@ class AbstractModelObject:
         logger.info("########## {} __setattr__ ##########".format(self.__class__.__name__))
         logger.info("key: {}".format(key))
         logger.info("value: {}".format(value))
-        if key in self.allowed_attributes:
+        if key in self.allowed_attributes or key in self.__allowed_attributes:
             self.__attributes[key] = value
 
     @property
@@ -36,7 +42,7 @@ class AbstractModelObject:
         logger.info("########## {} load ##########".format(self.__class__.__name__))
         logger.info("attributes: {}".format(attributes))
         for key, value in attributes.items():
-            if key in self.allowed_attributes:
+            if key in self.allowed_attributes or key in self.__allowed_attributes:
                 self.__attributes[key] = value
 
     @property
