@@ -19,8 +19,7 @@ class TicketModel(AbstractModel):
     ]
 
     optional_attributes = [
-        'purchase_id',
-        'status'
+        'purchase_id'
     ]
 
     def create_ticket(self, attributes):
