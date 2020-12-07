@@ -22,5 +22,7 @@ def create_session():
 
 @sessions_blueprint.route('/sessions/<session_id>', methods=['DELETE'])
 def delete_session(session_id):
-    SessionModel().delete_session(session_id)
-    return Response(json.dumps({'message': 'success'}), status=200)
+    if SessionModel().delete_session(session_id):
+        return Response(json.dumps({'message': 'success'}), status=200)
+    else:
+        return Response(json.dumps({'error': 'failure'}), status=409)

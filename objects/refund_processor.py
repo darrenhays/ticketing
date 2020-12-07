@@ -21,6 +21,7 @@ class RefundProcessor:
         logger.info("########## {} process_refund ##########".format(self.__class__.__name__))
         logger.info("purchase_id: {}".format(purchase_id))
         logger.info("item_ids: {}".format(item_ids))
+
         purchase_record = PurchaseModel().get_purchase(purchase_id)
         updated_purchase_record = {}
         updated_purchase_record['purchased_items'] = purchase_record.get('purchased_items', [])

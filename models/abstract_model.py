@@ -76,7 +76,12 @@ class AbstractModel:
     def delete(self, id):
         logger.info("########## {} delete ##########".format(self.__class__.__name__))
         logger.info("id: {}".format(id))
-        self.update(id, {'status': "inactive"})
+        try:
+            self.update(id, {'status': "inactive"})
+        except Exception as e:
+            logger.error(e)
+            return False
+        return True
 
     def remove(self, id):
         logger.info("########## {} remove ##########".format(self.__class__.__name__))

@@ -2,6 +2,10 @@ import json
 import requests
 import unittest
 import uuid
+from models.event_model import EventModel
+from models.purchase_model import PurchaseModel
+from models.ticket_model import TicketModel
+from models.ticket_type_model import TicketTypeModel
 from models.user_model import UserModel
 from settings import BASE_URL
 from unittest.mock import patch
@@ -67,7 +71,8 @@ class TestProject(unittest.TestCase):
         expected_create_user_response_body = {
             "email": user_email,
             "first_name": user_first_name,
-            "last_name": user_last_name
+            "last_name": user_last_name,
+            "status": "active"
         }
 
         # create session
@@ -98,7 +103,8 @@ class TestProject(unittest.TestCase):
             "first_name": user_first_name,
             "last_name": user_last_name,
             "created": user_created,
-            "updated": user_updated
+            "updated": user_updated,
+            "status": "active"
         }
 
         # update user
@@ -122,7 +128,8 @@ class TestProject(unittest.TestCase):
             "email": user_email,
             "first_name": user_first_name,
             "last_name": user_last_name,
-            "created": user_created
+            "created": user_created,
+            "status": "active"
         }
 
         # create event
@@ -148,10 +155,11 @@ class TestProject(unittest.TestCase):
         event_created = create_event_response_body.pop('created')
         event_updated = create_event_response_body.pop('updated')
         expected_create_event_response_body = {
-                "title": event_title,
-                "capacity": event_capacity,
-                "description": event_description,
-                "user_id": user_id
+            "title": event_title,
+            "capacity": event_capacity,
+            "description": event_description,
+            "user_id": user_id,
+            "status": "active"
         }
 
         # get event
@@ -170,7 +178,8 @@ class TestProject(unittest.TestCase):
             "description": event_description,
             "user_id": user_id,
             "created": event_created,
-            "updated": event_updated
+            "updated": event_updated,
+            "status": "active"
         }
 
         # update event
@@ -194,7 +203,8 @@ class TestProject(unittest.TestCase):
             "capacity": event_capacity,
             "description": event_description,
             "user_id": user_id,
-            "created": event_created
+            "created": event_created,
+            "status": "active"
         }
 
         # create ticket_type
@@ -226,7 +236,8 @@ class TestProject(unittest.TestCase):
             "limit": ticket_type_limit,
             "description": ticket_type_description,
             "price": ticket_type_price,
-            "event_id": event_id
+            "event_id": event_id,
+            "status": "active"
         }
 
         # get ticket type
@@ -246,7 +257,8 @@ class TestProject(unittest.TestCase):
             "price": ticket_type_price,
             "event_id": event_id,
             "created": ticket_type_created,
-            "updated": ticket_type_updated
+            "updated": ticket_type_updated,
+            "status": "active"
         }
 
         # update ticket type
@@ -271,7 +283,8 @@ class TestProject(unittest.TestCase):
             "description": ticket_type_description,
             "price": ticket_type_price,
             "event_id": event_id,
-            "created": ticket_type_created
+            "created": ticket_type_created,
+            "status": "active"
         }
 
         # create purchase
@@ -316,7 +329,8 @@ class TestProject(unittest.TestCase):
                     "event_description": event_description,
                     "ticket_type_title": ticket_type_title,
                     "ticket_type_description": ticket_type_description,
-                    "amount_paid": ticket_type_price
+                    "amount_paid": ticket_type_price,
+                    "status": "active"
                 },
                 {
                     "event_id": event_id,
@@ -325,10 +339,12 @@ class TestProject(unittest.TestCase):
                     "event_description": event_description,
                     "ticket_type_title": ticket_type_title,
                     "ticket_type_description": ticket_type_description,
-                    "amount_paid": ticket_type_price
+                    "amount_paid": ticket_type_price,
+                    "status": "active"
                 }
             ],
-            "refunded_items": []
+            "refunded_items": [],
+            "status": "active"
         }
 
         # get purchase
@@ -359,7 +375,8 @@ class TestProject(unittest.TestCase):
                     "event_description": event_description,
                     "ticket_type_title": ticket_type_title,
                     "ticket_type_description": ticket_type_description,
-                    "amount_paid": ticket_type_price
+                    "amount_paid": ticket_type_price,
+                    "status": "active"
                 },
                 {
                     "event_id": event_id,
@@ -368,12 +385,14 @@ class TestProject(unittest.TestCase):
                     "event_description": event_description,
                     "ticket_type_title": ticket_type_title,
                     "ticket_type_description": ticket_type_description,
-                    "amount_paid": ticket_type_price
+                    "amount_paid": ticket_type_price,
+                    "status": "active"
                 }
             ],
             "refunded_items": [],
             "created": purchase_created,
-            "updated": purchase_updated
+            "updated": purchase_updated,
+            "status": "active"
         }
 
         # refund purchase
@@ -406,7 +425,8 @@ class TestProject(unittest.TestCase):
                     "event_description": event_description,
                     "ticket_type_title": ticket_type_title,
                     "ticket_type_description": ticket_type_description,
-                    "amount_paid": ticket_type_price
+                    "amount_paid": ticket_type_price,
+                    "status": "active"
                 },
                 {
                     "event_id": event_id,
@@ -415,11 +435,13 @@ class TestProject(unittest.TestCase):
                     "event_description": event_description,
                     "ticket_type_title": ticket_type_title,
                     "ticket_type_description": ticket_type_description,
-                    "amount_paid": ticket_type_price
+                    "amount_paid": ticket_type_price,
+                    "status": "active"
                 }
             ],
             "created": purchase_created,
             "id": purchase_id,
+            "status": "active"
         }
 
         # delete ticket type
@@ -442,7 +464,6 @@ class TestProject(unittest.TestCase):
             }
         )
         delete_event_response_body = json.loads(delete_event_response.text)
-        expected_delete_event_response_body = {'message': 'success'}
 
         # delete user
         delete_user_response = requests.request(
@@ -467,7 +488,13 @@ class TestProject(unittest.TestCase):
         expected_delete_session_response_body = {'message': 'success'}
 
         # clean up section
-        UserModel().delete_user(user_id)
+        UserModel().remove(user_id)
+        tickets_to_remove = TicketModel().get_tickets_by_event(event_id)
+        for ticket in tickets_to_remove:
+            TicketModel().remove(ticket.get('id'))
+        TicketTypeModel().remove(ticket_type_id)
+        PurchaseModel().remove(purchase_id)
+        EventModel().remove(event_id)
 
         # testing create user
         assert create_user_response.status_code == 200
@@ -531,7 +558,7 @@ class TestProject(unittest.TestCase):
 
         # testing delete event
         assert delete_event_response.status_code == 200
-        assert delete_event_response_body == expected_delete_event_response_body
+        assert delete_event_response_body
 
         # testing delete user
         assert delete_user_response.status_code == 200
