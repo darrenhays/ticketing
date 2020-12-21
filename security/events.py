@@ -55,7 +55,9 @@ def ticket_type_has_no_tickets_sold(f):
         ticket_type_id = kwargs.get('ticket_type_id')
         tickets_sold = TicketModel().get_tickets_by_ticket_type(ticket_type_id)
         if not tickets_sold:
+            logger.info("########## ticket_type_has_no_tickets_sold: success ##########")
             return f(*args, **kwargs)
         else:
+            logger.error("########## ticket_type_has_no_tickets_sold: failure ##########")
             return Response(json.dumps({'message': 'cannot delete ticket types with tickets sold'}), status=403)
     return wrapped

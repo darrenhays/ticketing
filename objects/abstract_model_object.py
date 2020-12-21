@@ -13,12 +13,12 @@ class AbstractModelObject:
         'status'
     ]
     sensitive_attributes = []
-    allowed_attributes = [] + sensitive_attributes
+    allowed_attributes = []
 
     def __init__(self, attributes={}):
         logger.info("########## {} __init__ ##########".format(self.__class__.__name__))
         logger.info("attributes: {}".format(attributes))
-        self.allowed_attributes.extend(['created', 'updated'])
+        self.allowed_attributes.extend(self.__allowed_attributes)
         self.load(attributes)
 
     def __getattr__(self, key):
@@ -30,8 +30,15 @@ class AbstractModelObject:
         logger.info("########## {} __setattr__ ##########".format(self.__class__.__name__))
         logger.info("key: {}".format(key))
         logger.info("value: {}".format(value))
-        if key in self.allowed_attributes + self.__allowed_attributes:
+        if key in self.allowed_attributes:
             self.__attributes[key] = value
+
+    @property
+    def allowed_atrributes(self):
+        return self.allowed_attributes + self.__allowed_attributes + self.sensitive_attributes
+
+    def allowed_attributes(self, value):
+        self.allowed_attributes.append(value)
 
     @property
     def __dict__(self):
@@ -42,7 +49,7 @@ class AbstractModelObject:
         logger.info("########## {} load ##########".format(self.__class__.__name__))
         logger.info("attributes: {}".format(attributes))
         for key, value in attributes.items():
-            if key in self.allowed_attributes + self.__allowed_attributes:
+            if key in self.allowed_attributes:
                 self.__attributes[key] = value
 
     @property
