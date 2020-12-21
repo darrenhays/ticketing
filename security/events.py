@@ -6,6 +6,7 @@ from models.event_model import EventModel
 from models.session_model import SessionModel
 from models.ticket_model import TicketModel
 from models.ticket_type_model import TicketTypeModel
+from models.user_model import UserModel
 
 logger = logging.getLogger()
 
@@ -16,8 +17,9 @@ def is_users_event(f):
         session_id = request.headers.get('session_id')
         event_id = kwargs.get('event_id')
         user_id = SessionModel().get_session(session_id).get('user_id')
+        parent_user_id = UserModel().get_user(user_id).get('parent_user_id')
         event_user_id = EventModel().get_event(event_id).get('user_id')
-        if user_id == event_user_id:
+        if user_id == event_user_id or parent_user_id == event_user_id:
             return f(*args, **kwargs)
         else:
             return Response(json.dumps({'message': 'unauthorized'}), status=403)

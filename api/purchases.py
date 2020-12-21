@@ -2,13 +2,8 @@ import json
 import logging
 from flask import Blueprint, Response, request
 from models.purchase_model import PurchaseModel
-from models.ticket_model import TicketModel
-from objects.payment_handler import PaymentHandler
 from objects.purchase_processor import PurchaseProcessor, ItemsNotAvailable, PaymentError
 from objects.refund_processor import RefundProcessor, ItemsNotAvailable, ProcessingFailure
-from objects.ticket import Ticket
-from objects.ticket_checker import TicketChecker
-from objects.ticket_processor import TicketProcessor
 from security.purchases import is_users_purchase
 from security.sessions import is_valid_session
 
