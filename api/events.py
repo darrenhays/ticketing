@@ -2,8 +2,9 @@ import json
 from flask import Blueprint, Response, request
 from models.event_model import EventModel
 from models.session_model import SessionModel
+from models.user_model import UserModel
 from objects.bulk_refund_processor import BulkRefundProcessor
-from security.events import is_users_event, event_has_no_tickets_sold
+from security.events import is_users_event
 from security.sessions import is_valid_session
 
 events_blueprint = Blueprint('events', __name__)
@@ -14,6 +15,8 @@ events_blueprint = Blueprint('events', __name__)
 def create_event():
     session_id = request.headers.get('session_id')
     user_id = SessionModel().get_session(session_id).get('user_id')
+    user = UserModel().get_user(user_id)
+    user_id = user.get('parent_user_id') if user.get('parent_user_id') else user_id
     attributes = json.loads(request.data)
     attributes['user_id'] = user_id
     try:
